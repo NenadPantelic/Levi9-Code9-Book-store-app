@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -78,18 +79,9 @@ public class User {
 	@Column(name = "updated_at")
 	private Instant _updatedAt;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "user_permission", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "permission_id") })
-	private List<Permission> _permissions;
-
-	public List<String> getRoles() {
-		List<String> roles = new ArrayList<>();
-		for (Permission permission : getPermissions()) {
-			roles.add(permission.getAuthority());
-		}
-		return roles;
-	}
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="role", nullable=false)
+	private Role _role;
 
 	/* data that can be added - picture, */
 

@@ -76,6 +76,17 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/Code9_Auth_Service_Book_Store?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=false</url>
+					<user>code9_user_auths</user>
+					<password>]8anTNz]}Gk6^Uk!Mp25</password>
+					<baselineOnMigrate>true</baselineOnMigrate>
+					<baselineVersion>0</baselineVersion>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
