@@ -69,7 +69,7 @@ public class User {
 	@Column(name = "gender")
 	@Enumerated(value = EnumType.ORDINAL)
 	@Builder.Default
-	private Gender _genderGender = Gender.PREFER_NOT_TO_SAY;
+	private Gender _gender = Gender.PREFER_NOT_TO_SAY;
 
 	@CreatedDate
 	@Column(name = "created_at")
