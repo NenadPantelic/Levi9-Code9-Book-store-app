@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.levi9.code9.authservice.security.AuthManager;
 import com.levi9.code9.authservice.security.JwtConfigurer;
 import com.levi9.code9.authservice.security.JwtTokenProvider;
 
@@ -20,16 +22,18 @@ import lombok.experimental.Accessors;
 @Accessors(prefix="_")
 @Getter
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JwtTokenProvider _tokenProvider;
 	
 
-	@Bean
+	@Bean//(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
+		return new AuthManager();
+				//super.authenticationManagerBean();
 	}
 	
 	protected void configure(HttpSecurity http) throws Exception {
@@ -39,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.authorizeRequests()
-				.antMatchers("/auth/signin", "/auth/signup/", "/api-docs/**", "/swagger-ui.html**").permitAll()
-				.antMatchers("/api/**").authenticated()
+				.antMatchers("/api/v1/auth/", "/auth/signup/", "/api-docs/**", "/swagger-ui.html**").permitAll()
+				.antMatchers("/api/v2/**").authenticated()
 				.antMatchers("/users").denyAll()
 			.and()
 			.apply(new JwtConfigurer(getTokenProvider()));

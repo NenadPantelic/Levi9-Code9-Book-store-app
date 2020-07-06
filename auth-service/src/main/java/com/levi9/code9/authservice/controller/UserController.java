@@ -22,13 +22,13 @@ public class UserController {
 	@Autowired
 	private UserService _userService;
 	
-	@PostMapping(value="/auth/signup")
-	public User registerUser(@RequestBody SignupDto signupDto) {
-		log.info("DEbug here");
-		User user = getUserService().registerUser(signupDto);
-		return user;
-		
-	}
-	
+//	@PostMapping(value="/auth/signup")
+//	public User registerUser(@RequestBody SignupDto signupDto) {
+//		log.info("DEbug here");
+//		User user = getUserService().registerUser(signupDto);
+//		return user;
+//		
+//	}
+//	
 
 }

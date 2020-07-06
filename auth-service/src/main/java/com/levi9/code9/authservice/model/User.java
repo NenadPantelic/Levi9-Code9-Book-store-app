@@ -85,6 +85,5 @@ public class User {
     @JoinColumn(name="role", nullable=false)
 	private Role _role;
 
-	/* data that can be added - picture, */
 
 }
