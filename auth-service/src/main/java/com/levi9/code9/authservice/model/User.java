@@ -1,8 +1,7 @@
 package com.levi9.code9.authservice.model;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,15 +12,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,7 +61,7 @@ public class User {
 	@Column(name = "email", unique = true)
 	private String _email;
 
-	@Size(min = 8, max = 50, message = "Length of the last name must be between 1 and 50.")
+	@Size(min = 6, max=255, message = "Length of the password must be between 6 and 50.")
 	@Column(name = "password")
 	private String _password;
 
@@ -71,14 +70,17 @@ public class User {
 	@Builder.Default
 	private Gender _gender = Gender.PREFER_NOT_TO_SAY;
 
-	@CreatedDate
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
-	private Instant _createdAt;
+	private Date _createdAt;
 
-	@LastModifiedDate
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")
-	private Instant _updatedAt;
+	private Date _updatedAt;
 
+	
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="role", nullable=false)
 	private Role _role;

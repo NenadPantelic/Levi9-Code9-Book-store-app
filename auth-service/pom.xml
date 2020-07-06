@@ -78,12 +78,23 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.mapstruct</groupId> -->
+		<!-- <artifactId>mapstruct</artifactId> -->
+		<!-- <version>1.3.1.Final</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>1.3.1.Final</version>
+			<artifactId>mapstruct-jdk8</artifactId>
+			<version>1.3.0.Beta2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 
 	</dependencies>
 	<build>
@@ -101,6 +112,42 @@
 					<password>]8anTNz]}Gk6^Uk!Mp25</password>
 					<baselineOnMigrate>true</baselineOnMigrate>
 					<baselineVersion>0</baselineVersion>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-compiler-plugin</artifactId> -->
+			<!-- <version>3.5.1</version> -->
+			<!-- <configuration> -->
+			<!-- <source>1.8</source> -->
+			<!-- <target>1.8</target> -->
+			<!-- <annotationProcessorPaths> -->
+			<!-- <path> -->
+			<!-- <groupId>org.mapstruct</groupId> -->
+			<!-- <artifactId>mapstruct-processor</artifactId> -->
+			<!-- <version>${org.mapstruct.version}</version> -->
+			<!-- </path> -->
+			<!-- </annotationProcessorPaths> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>1.3.0.Beta2</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 		</plugins>
