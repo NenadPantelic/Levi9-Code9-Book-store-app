@@ -17,11 +17,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(prefix = "_")
 @Getter
+@Slf4j
 public class JwtTokenFilter extends GenericFilterBean {
 
 	@Autowired
@@ -32,9 +34,10 @@ public class JwtTokenFilter extends GenericFilterBean {
 			throws IOException, ServletException {
 
 		String token = getTokenProvider().resolveToken((HttpServletRequest) request);
-
+		//log.info("Debug");
 		if (token != null && getTokenProvider().validateToken(token)) {
 			Authentication auth = getTokenProvider().getAuthentication(token);
+			log.info(auth.toString());
 			if (auth != null) {
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}

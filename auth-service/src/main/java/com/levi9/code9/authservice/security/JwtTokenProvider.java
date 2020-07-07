@@ -2,14 +2,15 @@ package com.levi9.code9.authservice.security;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.levi9.code9.authservice.service.UserService;
@@ -52,15 +53,13 @@ public class JwtTokenProvider {
 
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + _validityInMilliseconds);
-
 		return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
 				.signWith(SignatureAlgorithm.HS256, _secretKey).compact();
 	}
 
 	public Authentication getAuthentication(String token) {
-//		UserDetails userDetails = userServi.loadUserByUsername(getUsername(token));
-//		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-		return null;
+		UserDetails userDetails = getUserService().loadUserByUsername(getUsername(token));
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
 	private String getUsername(String token) {
@@ -82,7 +81,7 @@ public class JwtTokenProvider {
 				return false;
 			}
 			return true;
-		// add exceptions
+			// add exceptions
 		} catch (SignatureException ex) {
 			log.error("Invalid JWT signature");
 		} catch (MalformedJwtException ex) {

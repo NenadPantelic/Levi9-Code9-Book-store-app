@@ -1,4 +1,4 @@
-package com.levi9.code9.authservice.dto;
+package com.levi9.code9.authservice.dto.request;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

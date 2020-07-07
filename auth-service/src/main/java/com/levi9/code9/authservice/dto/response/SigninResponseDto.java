@@ -1,4 +1,4 @@
-package com.levi9.code9.authservice.dto;
+package com.levi9.code9.authservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

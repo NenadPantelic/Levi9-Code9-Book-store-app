@@ -1,4 +1,4 @@
-package com.levi9.code9.authservice.dto;
+package com.levi9.code9.authservice.dto.request;
 
 import javax.validation.constraints.NotBlank;
 
@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(prefix="_")
-public class SignupDto {
+public class UserRegisterRequestDto {
 
 	@NotBlank
 	private String _firstName;
