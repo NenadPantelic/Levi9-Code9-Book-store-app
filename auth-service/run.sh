@@ -1,2 +1,2 @@
-#!bin/bash
+#!/bin/bash
 mvn spring-boot:run

@@ -7,9 +7,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.levi9.code9.authservice.dto.request.SigninRequestDto;
@@ -33,10 +32,13 @@ public class AuthServiceImpl implements AuthService {
 	private UserRepository _userRepository;
 
 	@Autowired
-	AuthenticationManager _authenticationManager;
+	private AuthenticationManager _authenticationManager;
 
 	@Autowired
-	JwtTokenProvider _tokenProvider;
+	private JwtTokenProvider _tokenProvider;
+
+	@Autowired
+	PasswordEncoder _passwordEncoder;
 
 	@Override
 	public Optional<User> findUserByUsername(String username) {
@@ -44,21 +46,28 @@ public class AuthServiceImpl implements AuthService {
 
 	}
 
-
 	public SigninResponseDto signin(SigninRequestDto credentialsDto) {
 		try {
 			String username = credentialsDto.getUsername();
-			String pasword = credentialsDto.getPassword();
+			String password = credentialsDto.getPassword();
 			log.info("Authentication in progress.....");
 
-			getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(username, pasword));
+			getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			log.info("HERE");
 
 			Optional<User> user = findUserByUsername(username);
 			String token = "";
 			String role = null;
+
 			if (user.isPresent() == true) {
 				role = user.get().getRole().getAuthority();
-				token = getTokenProvider().createToken(username, role);
+				String pwd = user.get().getPassword();
+				if (getPasswordEncoder().matches(password, pwd)) {
+					token = getTokenProvider().createToken(username, role);
+				} else {
+					throw new BadCredentialsException("Invalid username/password supplied!");
+				}
+
 			} else {
 				throw new UsernameNotFoundException("Username " + username + " not found!");
 			}

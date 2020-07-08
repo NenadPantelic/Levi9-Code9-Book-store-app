@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.GenericFilterBean;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(prefix = "_")
 @Getter
 @Slf4j
+@Service
 public class JwtTokenFilter extends GenericFilterBean {
 
 	@Autowired
@@ -37,7 +39,6 @@ public class JwtTokenFilter extends GenericFilterBean {
 		//log.info("Debug");
 		if (token != null && getTokenProvider().validateToken(token)) {
 			Authentication auth = getTokenProvider().getAuthentication(token);
-			log.info(auth.toString());
 			if (auth != null) {
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}

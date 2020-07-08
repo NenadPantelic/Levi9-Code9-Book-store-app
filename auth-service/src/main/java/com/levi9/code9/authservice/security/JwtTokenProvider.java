@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.levi9.code9.authservice.exception.InvalidJwtAuthenticationException;
 import com.levi9.code9.authservice.service.UserService;
 
 import io.jsonwebtoken.Claims;
@@ -81,18 +82,21 @@ public class JwtTokenProvider {
 				return false;
 			}
 			return true;
-			// add exceptions
 		} catch (SignatureException ex) {
 			log.error("Invalid JWT signature");
+			throw new InvalidJwtAuthenticationException("Invalid JWT signature");
 		} catch (MalformedJwtException ex) {
 			log.error("Invalid JWT token");
+			throw new InvalidJwtAuthenticationException("Invalid JWT token");
 		} catch (ExpiredJwtException ex) {
 			log.error("Expired JWT token");
+			throw new InvalidJwtAuthenticationException("Expired JWT token");
 		} catch (UnsupportedJwtException ex) {
 			log.error("Unsupported JWT token");
+			throw new InvalidJwtAuthenticationException("Unsupported JWT token");
 		} catch (IllegalArgumentException ex) {
 			log.error("JWT claims string is empty.");
+			throw new InvalidJwtAuthenticationException("JWT claims string is empty.");
 		}
-		return false;
 	}
 }
