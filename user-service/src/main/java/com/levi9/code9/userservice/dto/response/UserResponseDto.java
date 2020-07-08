@@ -20,4 +20,5 @@ public class UserResponseDto {
 	private String username;
 	private String email;
 	private Gender gender;
+	private String role;
 }

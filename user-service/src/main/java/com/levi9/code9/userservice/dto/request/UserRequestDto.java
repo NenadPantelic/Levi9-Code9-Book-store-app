@@ -1,6 +1,7 @@
 package com.levi9.code9.userservice.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.levi9.code9.userservice.model.Gender;
 
@@ -22,5 +23,7 @@ public class UserRequestDto {
 	@NotBlank
 	private String _password;
 	private Gender _gender;
+	@NotNull
+	private Long _roleId;
 	
 }

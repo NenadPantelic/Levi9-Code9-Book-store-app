@@ -40,25 +40,23 @@ public class UserController {
 	}
 
 	@GetMapping(value = "")
-	public List<User> getAllUsers() {
+	public List<UserResponseDto> getAllUsers() {
 		return getUserService().getAllUsers();
 
 	}
-	
-	
+
 	@GetMapping(value = "{id}")
-	public User getUserById(@PathVariable("id") Long id) {
+	public UserResponseDto getUserById(@PathVariable("id") Long id) {
 		return getUserService().getUserById(id);
 
 	}
-	
+
 	@PutMapping(value = "{id}")
-	public User updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDto userDto) {
+	public UserResponseDto updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDto userDto) {
 		return getUserService().updateUser(id, userDto);
 
 	}
-	
-	
+
 	@DeleteMapping(value = "{id}")
 	public boolean deleteUser(@PathVariable("id") Long id) {
 		return getUserService().deleteUser(id);

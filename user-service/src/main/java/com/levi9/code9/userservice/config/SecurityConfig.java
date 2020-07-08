@@ -13,12 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.levi9.code9.userservice.security.AuthManager;
-import com.levi9.code9.userservice.security.JwtConfigurer;
 import com.levi9.code9.userservice.security.JwtTokenFilter;
 import com.levi9.code9.userservice.security.JwtTokenProvider;
-import com.levi9.code9.userservice.security.RESTAuthenticationEntryPoint;
+import com.levi9.code9.userservice.security.RestAuthenticationEntryPoint;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -38,29 +38,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JwtTokenFilter _tokenFilter;
-	
+
 	@Autowired
-	private RESTAuthenticationEntryPoint _authEntryPoint;
+	private RestAuthenticationEntryPoint _authEntryPoint;
 
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return new AuthManager();
-		// return super.authenticationManagerBean();
 	}
 
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.httpBasic().disable().csrf().disable().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/auth/*", "**/users/**", "/api-docs/**", "/swagger-ui.html**").permitAll()
-				// .antMatchers("/api/**")
-				// .authenticated()
-				// .antMatchers("/users").denyAll()
-				.and().apply(new JwtConfigurer(getTokenProvider())).and().exceptionHandling()
-				.authenticationEntryPoint(_authEntryPoint);
-
-		// http.addFilterBefore(getTokenFilter(),
-		// UsernamePasswordAuthenticationFilter.class);
+		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/auth/*").permitAll().anyRequest()
+				.authenticated().and().exceptionHandling().authenticationEntryPoint(_authEntryPoint).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

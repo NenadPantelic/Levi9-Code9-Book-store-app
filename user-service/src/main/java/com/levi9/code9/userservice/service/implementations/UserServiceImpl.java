@@ -1,6 +1,5 @@
 package com.levi9.code9.userservice.service.implementations;
 
-import java.lang.module.FindException;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = getUserRepository().findUserByUsername(username);
+		Optional<User> user = getUserRepository().findUserBy_username(username);
 		if (user.isPresent() == true) {
 			return user.get();
 		} else {
@@ -57,27 +56,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	}
 
-	public UserResponseDto registerUser(UserRequestDto signupDto) {
+	public UserResponseDto registerUser(UserRequestDto userDto) {
 		log.info("Adding new user...");
-		User user = User.builder().firstName(signupDto.getFirstName()).lastName(signupDto.getLastName())
-				.username(signupDto.getUsername()).email(signupDto.getEmail())
-				.password(getPasswordEncoder().encode(signupDto.getPassword())).gender(signupDto.getGender())
-				.role(getRoleRepository().findBy_description("BUYER")).build();
-
+		User user = getUserMapper().mapUserDtoToUser(userDto);
+		user.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
-		log.info(user.toString());
-		log.info(getUserMapper().toString());
 		UserResponseDto dto = getUserMapper().userToUserDto(user);
-		log.info(dto.toString());
 		return dto;
 	}
 
-	public List<User> getAllUsers() {
+	public List<UserResponseDto> getAllUsers() {
 		log.info("Fetching all users...");
-		return getUserRepository().findAll();
+		return getUserMapper().usersToUsersDto(getUserRepository().findAll());
 	}
 
-	public User getUserById(Long id) {
+	public User fetchUserById(Long id) {
 		log.info("Fetching user with id " + id);
 		Optional<User> user = getUserRepository().findById(id);
 		if (!user.isPresent()) {
@@ -86,18 +79,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return user.get();
 	}
 
-	public User updateUser(Long id, UserRequestDto userDto) {
-		User user = getUserById(id);
-		// user = getUserMapper()
+	public UserResponseDto getUserById(Long id) {
+		return getUserMapper().userToUserDto(fetchUserById(id));
+	}
 
-		log.info(getUserMapper().mapUserDtoToUser(userDto).toString());
-		return null;
+	public UserResponseDto updateUser(Long id, UserRequestDto userDto) {
+		User user = fetchUserById(id);
+		User updatedUser = getUserMapper().mapUserDtoToUser(userDto);
+		updatedUser.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		updatedUser = getUserRepository().save(updatedUser);
+		return getUserMapper().userToUserDto(updatedUser);
 
 	}
 
 	public boolean deleteUser(Long id) {
-//		User user = getUserById(id);
-//		getUserRepository().delete(user);
 		getUserRepository().deleteById(id);
 		return true;
 

@@ -13,8 +13,8 @@ public interface UserService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
 	public UserResponseDto registerUser(UserRequestDto signupDto);
-	public List<User> getAllUsers();
-	public User getUserById(Long id);
-	public User updateUser(Long id, UserRequestDto userDto);
+	public List<UserResponseDto> getAllUsers();
+	public UserResponseDto getUserById(Long id);
+	public UserResponseDto updateUser(Long id, UserRequestDto userDto);
 	public boolean deleteUser(Long id);
 }

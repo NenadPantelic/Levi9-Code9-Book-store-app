@@ -3,23 +3,28 @@ package com.levi9.code9.userservice.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.levi9.code9.userservice.dto.request.UserRequestDto;
 import com.levi9.code9.userservice.dto.response.UserResponseDto;
 import com.levi9.code9.userservice.model.User;
+import com.levi9.code9.userservice.repository.RoleRepository;
 
-//@Component
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-//	@Mappings({
-//		  @Mapping(target="id", source = "user._id"),
-//		  @Mapping(target="firstName", source = "user._firstName"),
-//		  //@Mapping(target="employeeStartDt", source = "entity.startDt",
-//		   //        dateFormat = "dd-MM-yyyy HH:mm:ss")
-//		  })
+	
+	@Mappings({
+        @Mapping(target="role", expression="java(user.getRole().getDescription())")
+    })
 	UserResponseDto userToUserDto(User user);
 
 	List<UserResponseDto> usersToUsersDto(List<User> users);
-	User mapUserDtoToUser (UserRequestDto dto);
+
+//	@Mappings({
+//        @Mapping(target="_role", expression="java(_roleRepository.findBy_description(dto.role))")
+//    })
+	User mapUserDtoToUser(UserRequestDto dto);
 
 }

@@ -10,5 +10,5 @@ import com.levi9.code9.userservice.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	public Optional<User> findUserByUsername(String username);
+	public Optional<User> findUserBy_username(String username);
 }
