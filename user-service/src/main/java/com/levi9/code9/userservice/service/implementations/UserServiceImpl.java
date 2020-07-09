@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.levi9.code9.userservice.client.AuthServiceClient;
 import com.levi9.code9.userservice.dto.request.UserRequestDto;
 import com.levi9.code9.userservice.dto.response.UserResponseDto;
 import com.levi9.code9.userservice.exception.ResourceNotFoundException;
@@ -31,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Service
-@Transactional
+//@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserRepository _userRepository;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private PasswordEncoder _passwordEncoder;
 
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = getUserRepository().findUserBy_username(username);
@@ -59,8 +61,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public UserResponseDto registerUser(UserRequestDto userDto) {
 		log.info("Adding new user...");
 		User user = getUserMapper().mapUserDtoToUser(userDto);
+		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		user.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
+
 		UserResponseDto dto = getUserMapper().userToUserDto(user);
 		return dto;
 	}
@@ -83,15 +87,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return getUserMapper().userToUserDto(fetchUserById(id));
 	}
 
+	@Transactional
 	public UserResponseDto updateUser(Long id, UserRequestDto userDto) {
+		log.info("Updating user...");
 		User user = fetchUserById(id);
 		User updatedUser = getUserMapper().mapUserDtoToUser(userDto);
+		updatedUser.setId(id);
 		updatedUser.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
+		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
 		return getUserMapper().userToUserDto(updatedUser);
 
 	}
 
+	@Transactional
 	public boolean deleteUser(Long id) {
 		getUserRepository().deleteById(id);
 		return true;

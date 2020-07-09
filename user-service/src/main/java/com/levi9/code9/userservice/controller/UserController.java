@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.levi9.code9.userservice.client.AuthServiceClient;
 import com.levi9.code9.userservice.dto.request.UserRequestDto;
 import com.levi9.code9.userservice.dto.response.UserResponseDto;
-import com.levi9.code9.userservice.model.User;
 import com.levi9.code9.userservice.service.UserService;
 
 import lombok.Getter;
@@ -33,9 +33,21 @@ public class UserController {
 	@Autowired
 	private UserService _userService;
 
+	@Autowired
+	private AuthServiceClient _authServiceClient;
+
+	// TODO: add propper validator - validate if the action in another micro-service
+	// is successful
 	@PostMapping(value = "")
 	public UserResponseDto registerUser(@Valid @RequestBody UserRequestDto signupDto) {
-		return getUserService().registerUser(signupDto);
+		UserResponseDto newUser = getUserService().registerUser(signupDto);
+		UserResponseDto registeredUserInAuth = getAuthServiceClient().registerUser(signupDto);
+		if (registeredUserInAuth != null) {
+			log.info("User successfully registered in auth microservice!");
+		} else {
+			log.error("User is notregistered in auth microservice!");
+		}
+		return newUser;
 
 	}
 
@@ -52,13 +64,22 @@ public class UserController {
 	}
 
 	@PutMapping(value = "{id}")
-	public UserResponseDto updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDto userDto) {
-		return getUserService().updateUser(id, userDto);
+	public UserResponseDto updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDto userDto) {
+		UserResponseDto updatedUser = getUserService().updateUser(id, userDto);
+		UserResponseDto updateUserInAuthService = getAuthServiceClient().updateUser(id, userDto);
+		return updatedUser;
 
 	}
 
+	// possible problem - disagreement between ids in services - should be
+	// standardized and normalized
 	@DeleteMapping(value = "{id}")
 	public boolean deleteUser(@PathVariable("id") Long id) {
+		if (getAuthServiceClient().deleteUser(id)) {
+			log.info("User successfully removed from auth microservice!");
+		} else {
+			log.error("Action failled! User is not removed auth microservice!");
+		}
 		return getUserService().deleteUser(id);
 
 	}

@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,24 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @Service
-public class JwtTokenFilter extends OncePerRequestFilter{//GenericFilterBean {
+public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 
 	@Autowired
 	private JwtTokenProvider _tokenProvider;
-
-//	@Override
-//	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-//			throws IOException, ServletException {
-//
-//		String token = getTokenProvider().resolveToken((HttpServletRequest) request);
-//		if (token != null && getTokenProvider().validateToken(token)) {
-//			Authentication auth = getTokenProvider().getAuthentication(token);
-//			if (auth != null) {
-//				SecurityContextHolder.getContext().setAuthentication(auth);
-//			}
-//		}
-//		chain.doFilter(request, response);
-//	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -53,10 +37,11 @@ public class JwtTokenFilter extends OncePerRequestFilter{//GenericFilterBean {
 		if (token != null && getTokenProvider().validateToken(token)) {
 			Authentication auth = getTokenProvider().getAuthentication(token);
 			if (auth != null) {
+				log.info("Authenticating user....");
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}
 		}
-		chain.doFilter(request, response);		
+		chain.doFilter(request, response);
 	}
 
 }

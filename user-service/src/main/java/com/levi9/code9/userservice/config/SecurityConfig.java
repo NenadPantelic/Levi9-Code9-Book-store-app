@@ -31,9 +31,6 @@ import lombok.experimental.Accessors;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private JwtTokenProvider _tokenProvider;
-
-	@Autowired
 	private UserDetailsService _userDetailsService;
 
 	@Autowired

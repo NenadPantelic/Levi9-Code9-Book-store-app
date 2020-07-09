@@ -42,6 +42,8 @@ public class JwtTokenProvider {
 
 	@Autowired
 	private UserService _userService;
+	
+	public static String JWT_TOKEN = null;
 
 	@PostConstruct
 	protected void init() {
@@ -70,6 +72,7 @@ public class JwtTokenProvider {
 	public String resolveToken(HttpServletRequest req) {
 		String bearerToken = req.getHeader("Authorization");
 		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+			JWT_TOKEN = bearerToken;
 			return bearerToken.substring(7, bearerToken.length());
 		}
 		return null;

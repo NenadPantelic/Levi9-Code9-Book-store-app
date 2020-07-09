@@ -1,17 +1,16 @@
 package com.levi9.code9.authservice.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.levi9.code9.authservice.model.Gender;
-import com.levi9.code9.authservice.model.Role;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(prefix="_")
-public class UserRegisterRequestDto {
+public class UserRequestDto {
 
 	@NotBlank
 	private String _firstName;
@@ -24,5 +23,7 @@ public class UserRegisterRequestDto {
 	@NotBlank
 	private String _password;
 	private Gender _gender;
+	@NotNull
+	private Long _roleId;
 	
 }
