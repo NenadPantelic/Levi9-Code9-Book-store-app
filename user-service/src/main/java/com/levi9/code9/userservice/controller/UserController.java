@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping(value = "/api/v1/users/")
+@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ADMIN')")
+//@RolesAllowd({)
 public class UserController {
 
 	@Autowired
@@ -36,23 +40,20 @@ public class UserController {
 	@Autowired
 	private AuthServiceClient _authServiceClient;
 
-	// TODO: add propper validator - validate if the action in another micro-service
-	// is successful
 	@PostMapping(value = "")
 	public UserResponseDto registerUser(@Valid @RequestBody UserRequestDto signupDto) {
 		UserResponseDto newUser = getUserService().registerUser(signupDto);
-		UserResponseDto registeredUserInAuth = getAuthServiceClient().registerUser(signupDto);
-		if (registeredUserInAuth != null) {
-			log.info("User successfully registered in auth microservice!");
-		} else {
-			log.error("User is notregistered in auth microservice!");
-		}
+		getAuthServiceClient().registerUser(signupDto);
+		log.info("User successfully registered in auth microservice!");
 		return newUser;
 
 	}
-
+	//@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ADMIN')")
 	@GetMapping(value = "")
 	public List<UserResponseDto> getAllUsers() {
+		UserDetails details = getUserService().loadUserByUsername("sone");
+		if (details != null)
+			log.info(details.getAuthorities().toString());
 		return getUserService().getAllUsers();
 
 	}
@@ -65,22 +66,19 @@ public class UserController {
 
 	@PutMapping(value = "{id}")
 	public UserResponseDto updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDto userDto) {
+		log.info("User successfully updated in auth microservice!");
 		UserResponseDto updatedUser = getUserService().updateUser(id, userDto);
-		UserResponseDto updateUserInAuthService = getAuthServiceClient().updateUser(id, userDto);
+		getAuthServiceClient().updateUser(id, userDto);
 		return updatedUser;
 
 	}
 
-	// possible problem - disagreement between ids in services - should be
-	// standardized and normalized
 	@DeleteMapping(value = "{id}")
 	public boolean deleteUser(@PathVariable("id") Long id) {
-		if (getAuthServiceClient().deleteUser(id)) {
-			log.info("User successfully removed from auth microservice!");
-		} else {
-			log.error("Action failled! User is not removed auth microservice!");
-		}
-		return getUserService().deleteUser(id);
+		boolean result = getUserService().deleteUser(id);
+		getAuthServiceClient().deleteUser(id);
+		log.info("User successfully removed from auth microservice!");
+		return result;
 
 	}
 

@@ -1,8 +1,10 @@
 package com.levi9.code9.userservice.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -104,14 +106,11 @@ public class User implements UserDetails {
 //			inverseJoinColumns = { @JoinColumn (name = "role_id")})
 //	private Set<Role> _roles;
 //	
-//	public List<String> getRoles() {
-//		List<String> roles = new ArrayList<>();
-//		for (Role role : this.permissions) {
-//			roles.add(permission.getDescription());
-//		}
-//		return roles;
-//	}
-
+	public List<String> getRoles() {
+		List<String> roles = new ArrayList<>();
+		roles.add(getRole().getAuthority());
+		return roles;
+	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Arrays.asList(_role);
