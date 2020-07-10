@@ -1,6 +1,7 @@
 package com.levi9.code9.bookservice.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
@@ -51,7 +52,7 @@ public class Book {
 	private String _title;
 
 	@NotBlank(message = "Description cannot be blank. This is required field.")
-	@Column(name = "description")
+	@Column(name = "description", nullable = false)
 	private String _description;
 
 	@NotNull(message = "Book price must be provided.")
@@ -72,6 +73,18 @@ public class Book {
 	@JoinTable(name = "book_genre", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "genre_id") })
 	private Set<Genre> _genres;
+
+	// TODO: make a new entity - Publisher
+	@Column(name = "publisher", nullable = false)
+	private String _publisher;
+
+	@Column(name = "release_date", nullable = false)
+	private LocalDate _releaseDate;
+	
+    @OneToMany(mappedBy="_book")
+    private Set<BookAuthor> _authors;
+    
+
 
 	public void addGenre(Genre genre) {
 		_genres.add(genre);

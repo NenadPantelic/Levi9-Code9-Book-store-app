@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.levi9.code9.authservice.dto.request.UserRequestDto;
-import com.levi9.code9.authservice.dto.response.UserResponseDto;
+import com.levi9.code9.authservice.dto.request.UserRequestDTO;
+import com.levi9.code9.authservice.dto.response.UserResponseDTO;
 import com.levi9.code9.authservice.service.UserService;
 
 import lombok.Getter;
@@ -33,25 +33,25 @@ public class UserController {
 	private UserService _userService;
 
 	@PostMapping(value = "")
-	public UserResponseDto addUser(@Valid @RequestBody UserRequestDto signupDto) {
+	public UserResponseDTO addUser(@Valid @RequestBody UserRequestDTO signupDto) {
 		return getUserService().registerUser(signupDto);
 
 	}
 
 	@GetMapping(value = "")
-	public List<UserResponseDto> getAllUsers() {
+	public List<UserResponseDTO> getAllUsers() {
 		return getUserService().getAllUsers();
 
 	}
 
 	@GetMapping(value = "{id}")
-	public UserResponseDto getUserById(@PathVariable("id") Long id) {
+	public UserResponseDTO getUserById(@PathVariable("id") Long id) {
 		return getUserService().getUserById(id);
 
 	}
 
 	@PutMapping(value = "{id}")
-	public UserResponseDto updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDto userDto) {
+	public UserResponseDTO updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userDto) {
 		return getUserService().updateUser(id, userDto);
 
 	}

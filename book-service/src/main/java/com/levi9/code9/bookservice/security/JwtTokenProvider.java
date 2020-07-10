@@ -1,4 +1,4 @@
-package com.levi9.code9.authservice.security;
+package com.levi9.code9.bookservice.security;
 
 import java.util.Base64;
 import java.util.Date;
@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.authservice.exception.InvalidJwtAuthenticationException;
+import com.levi9.code9.bookservice.exception.InvalidJwtAuthenticationException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -54,9 +54,9 @@ public class JwtTokenProvider {
 		_secretKey = Base64.getEncoder().encodeToString(_secretKey.getBytes());
 	}
 
-	public String createToken(String username, List<String> roles) {
+	public String createToken(String username, String role) {
 		Claims claims = Jwts.claims().setSubject(username);
-		claims.put("roles", roles);
+		claims.put("roles", role);
 
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + getValidityInMilliseconds());

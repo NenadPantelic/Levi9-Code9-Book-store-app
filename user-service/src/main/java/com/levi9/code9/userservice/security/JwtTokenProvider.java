@@ -2,19 +2,20 @@ package com.levi9.code9.userservice.security;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.levi9.code9.userservice.exception.InvalidJwtAuthenticationException;
-import com.levi9.code9.userservice.service.UserService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -40,9 +41,12 @@ public class JwtTokenProvider {
 	@Value("${security.jwt.token.expire-length:3600000}")
 	private long _validityInMilliseconds; // 1h
 
-	@Autowired
-	private UserService _userService;
-	
+	@Value("${security.jwt.token.header:Authorization}")
+	private String _jwtHeader;
+
+	@Value("${security.jwt.token.header.prefix:Bearer }")
+	private String _headerPrefix;
+
 	public static String JWT_TOKEN = null;
 
 	@PostConstruct
@@ -55,23 +59,36 @@ public class JwtTokenProvider {
 		claims.put("roles", role);
 
 		Date now = new Date();
-		Date validity = new Date(now.getTime() + _validityInMilliseconds);
+		Date validity = new Date(now.getTime() + getValidityInMilliseconds());
 		return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
 				.signWith(SignatureAlgorithm.HS256, _secretKey).compact();
 	}
 
 	public Authentication getAuthentication(String token) {
-		UserDetails userDetails = getUserService().loadUserByUsername(getUsername(token));
-		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
+		String username = getUsername(token);
+		List<GrantedAuthority> authorities = getAuthorities(token);
+		return new UsernamePasswordAuthenticationToken(username, "", authorities);
 	}
 
 	private String getUsername(String token) {
-		return Jwts.parser().setSigningKey(_secretKey).parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parser().setSigningKey(getSecretKey()).parseClaimsJws(token).getBody().getSubject();
+	}
+
+	private Claims getClaimsFromToken(String token) {
+		return Jwts.parser().setSigningKey(getSecretKey()).parseClaimsJws(token).getBody();
+	}
+
+	private List<GrantedAuthority> getAuthorities(String token) {
+		Claims claims = getClaimsFromToken(token);
+		@SuppressWarnings("unchecked")
+		List<String> authorities = (List<String>) claims.get("roles");
+		return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
 
 	public String resolveToken(HttpServletRequest req) {
-		String bearerToken = req.getHeader("Authorization");
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+		String bearerToken = req.getHeader(getJwtHeader());
+		if (bearerToken != null && bearerToken.startsWith(getHeaderPrefix())) {
 			JWT_TOKEN = bearerToken;
 			return bearerToken.substring(7, bearerToken.length());
 		}
@@ -80,7 +97,7 @@ public class JwtTokenProvider {
 
 	public boolean validateToken(String token) {
 		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(_secretKey).parseClaimsJws(token);
+			Jws<Claims> claims = Jwts.parser().setSigningKey(getSecretKey()).parseClaimsJws(token);
 			if (claims.getBody().getExpiration().before(new Date())) {
 				return false;
 			}

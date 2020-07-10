@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.levi9.code9.userservice.dto.response.RoleResponseDto;
+import com.levi9.code9.userservice.dto.response.RoleResponseDTO;
 import com.levi9.code9.userservice.service.RoleService;
 
 import lombok.Data;
@@ -22,7 +22,7 @@ public class RoleController {
 	@Autowired
 	private RoleService _roleService;
 	@GetMapping
-	public List<RoleResponseDto> getRoles(){
+	public List<RoleResponseDTO> getRoles(){
 		return getRoleService().getRoles();
 	}
 	

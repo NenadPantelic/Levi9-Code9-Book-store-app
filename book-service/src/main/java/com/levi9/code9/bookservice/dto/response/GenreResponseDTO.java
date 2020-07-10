@@ -1,6 +1,5 @@
-package com.levi9.code9.authservice.dto.response;
+package com.levi9.code9.bookservice.dto.response;
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +10,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SigninResponseDto {
-
-	private String _username;
-	private String _token;
-	private List<String> _roles;
+public class GenreResponseDTO {
+	private Long _id;
+	private String _name;
 }

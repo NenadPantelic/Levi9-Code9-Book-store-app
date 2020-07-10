@@ -1,16 +1,16 @@
-package com.levi9.code9.authservice.dto.request;
+package com.levi9.code9.userservice.dto.request;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.levi9.code9.authservice.model.Gender;
+import com.levi9.code9.userservice.model.Gender;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(prefix="_")
-public class UserRequestDto {
+public class UserRequestDTO {
 
 	@NotBlank
 	private String _firstName;

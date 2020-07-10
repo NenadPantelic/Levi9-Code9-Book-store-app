@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(prefix="_")
 @Data
-public class SigninRequestDto {
+public class SigninRequestDTO {
 
 	@NotNull
 	@NotEmpty

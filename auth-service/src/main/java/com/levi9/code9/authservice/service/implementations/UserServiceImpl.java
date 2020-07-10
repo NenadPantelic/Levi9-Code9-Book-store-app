@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.authservice.dto.request.UserRequestDto;
-import com.levi9.code9.authservice.dto.response.UserResponseDto;
+import com.levi9.code9.authservice.dto.request.UserRequestDTO;
+import com.levi9.code9.authservice.dto.response.UserResponseDTO;
 import com.levi9.code9.authservice.exception.ResourceNotFoundException;
 import com.levi9.code9.authservice.mapper.UserMapper;
 import com.levi9.code9.authservice.model.User;
@@ -56,19 +56,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	}
 
-	public UserResponseDto registerUser(UserRequestDto userDto) {
+	public UserResponseDTO registerUser(UserRequestDTO userDto) {
 		log.info("Adding new user...");
-		User user = getUserMapper().mapUserDtoToUser(userDto);
+		User user = getUserMapper().mapUserDTOToUser(userDto);
 		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
-		UserResponseDto dto = getUserMapper().userToUserDto(user);
+		UserResponseDTO dto = getUserMapper().mapUserToUserDTO(user);
 		return dto;
 	}
 
-	public List<UserResponseDto> getAllUsers() {
+	public List<UserResponseDTO> getAllUsers() {
 		log.info("Fetching all users...");
-		return getUserMapper().usersToUsersDto(getUserRepository().findAll());
+		return getUserMapper().mapUserListToUserDTOList(getUserRepository().findAll());
 	}
 
 	public User fetchUserById(Long id) {
@@ -80,21 +80,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return user.get();
 	}
 
-	public UserResponseDto getUserById(Long id) {
-		return getUserMapper().userToUserDto(fetchUserById(id));
+	public UserResponseDTO getUserById(Long id) {
+		return getUserMapper().mapUserToUserDTO(fetchUserById(id));
 	}
 
 	@Transactional
-	public UserResponseDto updateUser(Long id, UserRequestDto userDto) {
+	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
 		log.info("Updating user...");
 		User user = fetchUserById(id);
-		User updatedUser = getUserMapper().mapUserDtoToUser(userDto);
+		User updatedUser = getUserMapper().mapUserDTOToUser(userDto);
 		updatedUser.setId(id);
 		updatedUser.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
-		return getUserMapper().userToUserDto(updatedUser);
+		return getUserMapper().mapUserToUserDTO(updatedUser);
 
 	}
 

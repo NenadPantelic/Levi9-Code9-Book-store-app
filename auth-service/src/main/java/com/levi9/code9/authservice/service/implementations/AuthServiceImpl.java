@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.authservice.dto.request.SigninRequestDto;
-import com.levi9.code9.authservice.dto.response.SigninResponseDto;
+import com.levi9.code9.authservice.dto.request.SigninRequestDTO;
+import com.levi9.code9.authservice.dto.response.SigninResponseDTO;
 import com.levi9.code9.authservice.model.User;
 import com.levi9.code9.authservice.repository.UserRepository;
 import com.levi9.code9.authservice.security.JwtTokenProvider;
@@ -47,15 +47,13 @@ public class AuthServiceImpl implements AuthService {
 
 	}
 
-	public SigninResponseDto signin(SigninRequestDto credentialsDto) {
+	public SigninResponseDTO signin(SigninRequestDTO credentialsDto) {
 		try {
 			String username = credentialsDto.getUsername();
 			String password = credentialsDto.getPassword();
 			log.info("Authentication in progress.....");
 
 			getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(username, password));
-			log.info("HERE");
-
 			Optional<User> user = findUserByUsername(username);
 			String token = "";
 			List<String> roles = null;
@@ -72,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
 			} else {
 				throw new UsernameNotFoundException("Username " + username + " not found!");
 			}
-			SigninResponseDto responseDto = new SigninResponseDto(username, token, roles);
+			SigninResponseDTO responseDto = new SigninResponseDTO(username, token, roles);
 			return responseDto;
 		} catch (AuthenticationException e) {
 			throw new BadCredentialsException("Invalid username/password supplied!");

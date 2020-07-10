@@ -6,18 +6,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import com.levi9.code9.authservice.dto.request.UserRequestDto;
-import com.levi9.code9.authservice.dto.response.UserResponseDto;
+import com.levi9.code9.authservice.dto.request.UserRequestDTO;
+import com.levi9.code9.authservice.dto.response.UserResponseDTO;
 import com.levi9.code9.authservice.model.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
 	@Mappings({ @Mapping(target = "roles", expression = "java(user.getStringRoles())") })
-	UserResponseDto userToUserDto(User user);
+	UserResponseDTO mapUserToUserDTO(User user);
 
-	List<UserResponseDto> usersToUsersDto(List<User> users);
+	List<UserResponseDTO> mapUserListToUserDTOList(List<User> users);
 
-	User mapUserDtoToUser(UserRequestDto dto);
+	User mapUserDTOToUser(UserRequestDTO dto);
 
 }

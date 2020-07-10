@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.userservice.dto.response.RoleResponseDto;
+import com.levi9.code9.userservice.dto.response.RoleResponseDTO;
 import com.levi9.code9.userservice.mapper.RoleMapper;
 import com.levi9.code9.userservice.repository.RoleRepository;
 import com.levi9.code9.userservice.service.RoleService;
@@ -25,8 +25,8 @@ public class RoleServiceImpl implements RoleService {
 	private RoleMapper _roleMapper;
 	
 	@Override
-	public List<RoleResponseDto> getRoles() {
-		return getRoleMapper().mapRolesToRoleResponseDtos(getRoleRepository().findAll());
+	public List<RoleResponseDTO> getRoles() {
+		return getRoleMapper().mapRoleListToRoleResponseDTOList(getRoleRepository().findAll());
 	}
 
 }

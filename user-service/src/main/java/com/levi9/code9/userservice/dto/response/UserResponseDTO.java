@@ -8,19 +8,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-//@Accessors(prefix="_")
+@Accessors(prefix="_")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDto {
+public class UserResponseDTO {
 
-	private Long id;
-	private String firstName;
-	private String lastName;
-	private String username;
-	private String email;
-	private Gender gender;
-	private List<String> roles;
+	private Long _id;
+	private String _firstName;
+	private String _lastName;
+	private String _username;
+	private String _email;
+	private Gender _gender;
+	private List<String> _roles;
 }

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.levi9.code9.authservice.dto.request.SigninRequestDto;
-import com.levi9.code9.authservice.dto.response.SigninResponseDto;
+import com.levi9.code9.authservice.dto.request.SigninRequestDTO;
+import com.levi9.code9.authservice.dto.response.SigninResponseDTO;
 import com.levi9.code9.authservice.service.AuthService;
 
 import io.swagger.annotations.Api;
@@ -29,7 +29,7 @@ public class AuthController {
 
 	@ApiOperation(value = "Authenticates a user and returns a token")
 	@PostMapping(value = "signin")
-	public SigninResponseDto signin(@Valid @RequestBody SigninRequestDto credentialsDto) {
+	public SigninResponseDTO signin(@Valid @RequestBody SigninRequestDTO credentialsDto) {
 		return getAuthService().signin(credentialsDto);
 	}
 
