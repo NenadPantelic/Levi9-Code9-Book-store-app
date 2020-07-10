@@ -53,26 +53,26 @@ public class User implements UserDetails {
 
 	@NotBlank(message = "First name cannot be blank. This is required field.")
 	@Size(max = 30, message = "Length of the first name must be between 1 and 30.")
-	@Column(name = "first_name")
+	@Column(name = "first_name", nullable=false)
 	private String _firstName;
 
 	@NotBlank(message = "Last name cannot be blank. This is required field.")
 	@Size(max = 30, message = "Length of the last name must be between 1 and 30.")
-	@Column(name = "last_name")
+	@Column(name = "last_name", nullable=false)
 	private String _lastName;
 
 	@NotBlank(message = "Username cannot be blank. This is required field.")
 	@Size(max = 50, message = "Length of the last name must be between 1 and 50.")
-	@Column(name = "username", unique = true)
+	@Column(name = "username", unique = true, nullable=false)
 	private String _username;
 
 	@NotBlank(message = "Email cannot be blank. This is required field.")
 	@Email(message = "Invalid email format.")
-	@Column(name = "email", unique = true)
+	@Column(name = "email", unique = true, nullable=false)
 	private String _email;
 
 	@Size(min = 6, max = 255, message = "Length of the password must be between 6 and 50.")
-	@Column(name = "password")
+	@Column(name = "password", nullable=false)
 	private String _password;
 
 	@Column(name = "gender")
@@ -102,7 +102,7 @@ public class User implements UserDetails {
 	@Column(name = "enabled")
 	private Boolean _enabled;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
 	private Set<Role> _roles;
