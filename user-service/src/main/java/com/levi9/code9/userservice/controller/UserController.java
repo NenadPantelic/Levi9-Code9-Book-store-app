@@ -30,8 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequestMapping(value = "/api/v1/users/")
-@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ADMIN')")
-//@RolesAllowd({)
+@PreAuthorize(" hasAuthority('ADMIN')")
 public class UserController {
 
 	@Autowired
@@ -48,12 +47,9 @@ public class UserController {
 		return newUser;
 
 	}
-	//@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ADMIN')")
+
 	@GetMapping(value = "")
 	public List<UserResponseDto> getAllUsers() {
-		UserDetails details = getUserService().loadUserByUsername("sone");
-		if (details != null)
-			log.info(details.getAuthorities().toString());
 		return getUserService().getAllUsers();
 
 	}

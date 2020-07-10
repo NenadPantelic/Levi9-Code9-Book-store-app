@@ -13,7 +13,7 @@ import com.levi9.code9.authservice.model.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-	@Mappings({ @Mapping(target = "role", expression = "java(user.getRole().getDescription())") })
+	@Mappings({ @Mapping(target = "roles", expression = "java(user.getStringRoles())") })
 	UserResponseDto userToUserDto(User user);
 
 	List<UserResponseDto> usersToUsersDto(List<User> users);

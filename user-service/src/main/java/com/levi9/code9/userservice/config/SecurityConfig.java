@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -47,23 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/auth/*").permitAll().anyRequest()
-				.authenticated().and().exceptionHandling().authenticationEntryPoint(_authEntryPoint).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.cors().and().csrf().disable().authorizeRequests().anyRequest().authenticated().and().exceptionHandling()
+				.authenticationEntryPoint(getAuthEntryPoint()).and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-		// Configure in-memory authentication provider for service accounts for //
-		// service inter-communication
-
-		auth.inMemoryAuthentication().withUser("sone") //
-				.password(passwordEncoder().encode("12345")) //
-				.roles("ADMIN");
-
-		// Configure DB authentication provider for user accounts
 		auth.userDetailsService(getUserDetailsService()).passwordEncoder(passwordEncoder());
 	}
 

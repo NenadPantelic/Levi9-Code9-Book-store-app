@@ -1,5 +1,6 @@
 package com.levi9.code9.authservice.service.implementations;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,13 +58,13 @@ public class AuthServiceImpl implements AuthService {
 
 			Optional<User> user = findUserByUsername(username);
 			String token = "";
-			String role = null;
+			List<String> roles = null;
 
 			if (user.isPresent() == true) {
-				role = user.get().getRole().getAuthority();
+				roles = user.get().getStringRoles();
 				String pwd = user.get().getPassword();
 				if (getPasswordEncoder().matches(password, pwd)) {
-					token = getTokenProvider().createToken(username, role);
+					token = getTokenProvider().createToken(username, roles);
 				} else {
 					throw new BadCredentialsException("Invalid username/password supplied!");
 				}
@@ -71,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
 			} else {
 				throw new UsernameNotFoundException("Username " + username + " not found!");
 			}
-			SigninResponseDto responseDto = new SigninResponseDto(username, token, role);
+			SigninResponseDto responseDto = new SigninResponseDto(username, token, roles);
 			return responseDto;
 		} catch (AuthenticationException e) {
 			throw new BadCredentialsException("Invalid username/password supplied!");

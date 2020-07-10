@@ -1,11 +1,12 @@
 package com.levi9.code9.userservice.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,9 +16,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -25,6 +29,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
@@ -71,7 +76,7 @@ public class User implements UserDetails {
 	private String _password;
 
 	@Column(name = "gender")
-	@Enumerated(value = EnumType.ORDINAL)
+	@Enumerated(value = EnumType.STRING)
 	@Builder.Default
 	private Gender _gender = Gender.PREFER_NOT_TO_SAY;
 
@@ -85,10 +90,6 @@ public class User implements UserDetails {
 	@Column(name = "updated_at")
 	private Date _updatedAt;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "role", nullable = false)
-	private Role _role;
-
 	@Column(name = "account_non_expired")
 	private Boolean _accountNonExpired;
 
@@ -100,20 +101,15 @@ public class User implements UserDetails {
 
 	@Column(name = "enabled")
 	private Boolean _enabled;
-//
-//	@ManyToMany(fetch = FetchType.EAGER)
-//	@JoinTable(name = "user_role", joinColumns = { @JoinColumn (name = "user_id") },
-//			inverseJoinColumns = { @JoinColumn (name = "role_id")})
-//	private Set<Role> _roles;
-//	
-	public List<String> getRoles() {
-		List<String> roles = new ArrayList<>();
-		roles.add(getRole().getAuthority());
-		return roles;
-	}
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "role_id") })
+	private Set<Role> _roles;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.asList(_role);
+		return _roles;
 	}
 
 	@Override
@@ -134,6 +130,16 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return _enabled;
+	}
+
+	public void addRole(Role role) {
+		_roles.add(role);
+	}
+
+	public List<String> getStringRoles() {
+		List<String> roles = new ArrayList<String>();
+		_roles.forEach(role -> roles.add(role.getAuthority()));
+		return roles;
 	}
 
 }

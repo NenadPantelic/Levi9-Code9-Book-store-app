@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		log.info("Adding new user...");
 		User user = getUserMapper().mapUserDtoToUser(userDto);
 		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
-		user.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
 		UserResponseDto dto = getUserMapper().userToUserDto(user);
 		return dto;
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User user = fetchUserById(id);
 		User updatedUser = getUserMapper().mapUserDtoToUser(userDto);
 		updatedUser.setId(id);
-		updatedUser.setRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		updatedUser.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);

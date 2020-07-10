@@ -2,6 +2,7 @@ package com.levi9.code9.authservice.security;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -50,9 +51,9 @@ public class JwtTokenProvider {
 		_secretKey = Base64.getEncoder().encodeToString(_secretKey.getBytes());
 	}
 
-	public String createToken(String username, String role) {
+	public String createToken(String username, List<String> roles) {
 		Claims claims = Jwts.claims().setSubject(username);
-		claims.put("role", role);
+		claims.put("role", roles);
 
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + _validityInMilliseconds);
