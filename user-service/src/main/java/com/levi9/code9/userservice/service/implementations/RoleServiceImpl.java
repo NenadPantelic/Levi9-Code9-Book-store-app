@@ -5,28 +5,37 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.levi9.code9.userservice.dto.request.RoleRequestDTO;
 import com.levi9.code9.userservice.dto.response.RoleResponseDTO;
 import com.levi9.code9.userservice.mapper.RoleMapper;
+import com.levi9.code9.userservice.model.Role;
 import com.levi9.code9.userservice.repository.RoleRepository;
 import com.levi9.code9.userservice.service.RoleService;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-@Accessors(prefix="_")
+@Accessors(prefix = "_")
 @Data
 @Service
 public class RoleServiceImpl implements RoleService {
 
 	@Autowired
 	private RoleRepository _roleRepository;
-	
+
 	@Autowired
 	private RoleMapper _roleMapper;
-	
+
+	@Override
+	public RoleResponseDTO createRole(RoleRequestDTO roleDTO) {
+		Role role = getRoleMapper().mapToEntity(roleDTO);
+		getRoleRepository().save(role);
+		return getRoleMapper().mapToDTO(role);
+	}
+
 	@Override
 	public List<RoleResponseDTO> getRoles() {
-		return getRoleMapper().mapRoleListToRoleResponseDTOList(getRoleRepository().findAll());
+		return getRoleMapper().mapToDTOList(getRoleRepository().findAll());
 	}
 
 }

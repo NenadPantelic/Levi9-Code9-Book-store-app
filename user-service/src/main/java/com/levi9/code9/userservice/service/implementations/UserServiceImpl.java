@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Service
-//@Transactional
+@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserRepository _userRepository;
@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private PasswordEncoder _passwordEncoder;
 
-	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = getUserRepository().findUserBy_username(username);
@@ -58,20 +57,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	}
 
-	public UserResponseDTO registerUser(UserRequestDTO userDto) {
+	@Override
+	public UserResponseDTO createUser(UserRequestDTO userDto) {
 		log.info("Adding new user...");
-		User user = getUserMapper().mapUserDTOToUser(userDto);
+		User user = getUserMapper().mapToEntity(userDto);
 		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
 
-		UserResponseDTO dto = getUserMapper().mapUserToUserDTO(user);
+		UserResponseDTO dto = getUserMapper().mapToDTO(user);
 		return dto;
 	}
 
+	@Override
 	public List<UserResponseDTO> getAllUsers() {
 		log.info("Fetching all users...");
-		return getUserMapper().mapUserListToUserDTOList(getUserRepository().findAll());
+		return getUserMapper().mapToDTOList(getUserRepository().findAll());
 	}
 
 	public User fetchUserById(Long id) {
@@ -83,25 +84,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return user.get();
 	}
 
+	@Override
 	public UserResponseDTO getUserById(Long id) {
-		return getUserMapper().mapUserToUserDTO(fetchUserById(id));
+		return getUserMapper().mapToDTO(fetchUserById(id));
 	}
 
-	@Transactional
+	@Override
+	// @Transactional
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
 		log.info("Updating user...");
 		User user = fetchUserById(id);
-		User updatedUser = getUserMapper().mapUserDTOToUser(userDto);
+		User updatedUser = getUserMapper().mapToEntity(userDto);
 		updatedUser.setId(id);
 		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
-		return getUserMapper().mapUserToUserDTO(updatedUser);
+		return getUserMapper().mapToDTO(updatedUser);
 
 	}
 
-	@Transactional
+	// @Transactional
 	public boolean deleteUser(Long id) {
 		getUserRepository().deleteById(id);
 		return true;

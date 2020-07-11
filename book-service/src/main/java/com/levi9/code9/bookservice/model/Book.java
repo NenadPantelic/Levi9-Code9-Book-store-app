@@ -3,9 +3,12 @@ package com.levi9.code9.bookservice.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
@@ -26,6 +30,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +44,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Builder
 @Entity
+@Where(clause = "is_active=true")
 public class Book {
 
 	@Id
@@ -47,7 +53,7 @@ public class Book {
 	private Long _id;
 
 	@NotBlank(message = "Book name must be provided.")
-	@Size(max = 30, message = "Length of the book name must be between 1 and 30.")
+	@Size(max = 100, message = "Length of the book name must be between 1 and 100.")
 	@Column(name = "title", unique = true, nullable = false)
 	private String _title;
 
@@ -69,31 +75,44 @@ public class Book {
 	@Column(name = "updated_at")
 	private Date _updatedAt;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "book_genre", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "genre_id") })
-	private Set<Genre> _genres;
+	@Builder.Default
+	private Set<Genre> _genres = new HashSet<Genre>();
 
 	// TODO: make a new entity - Publisher
 	@Column(name = "publisher", nullable = false)
 	private String _publisher;
 
 	@Column(name = "release_date", nullable = false)
-	private LocalDate _releaseDate;
-	
-    @OneToMany(mappedBy="_book")
-    private Set<BookAuthor> _authors;
-    
+	@Builder.Default
+	private LocalDate _releaseDate = LocalDate.of(2001, 1, 1);
 
+	@OneToMany(mappedBy = "_book")
+	private Set<BookAuthor> _authors;
+
+	@Column(name = "is_active")
+	@Builder.Default
+	private Boolean _isActive = true;
 
 	public void addGenre(Genre genre) {
 		_genres.add(genre);
+	}
+	
+	public void addGenres(Collection<Genre> genres) {
+		_genres.addAll(genres);
 	}
 
 	public List<String> getGenreNames() {
 		List<String> genres = new ArrayList<String>();
 		_genres.forEach(genre -> genres.add(genre.getName()));
 		return genres;
+	}
+
+	@PreRemove
+	private void preRemove() {
+		_isActive = false;
 	}
 
 }

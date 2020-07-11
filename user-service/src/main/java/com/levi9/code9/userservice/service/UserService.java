@@ -12,7 +12,7 @@ import com.levi9.code9.userservice.model.User;
 public interface UserService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
-	public UserResponseDTO registerUser(UserRequestDTO signupDto);
+	public UserResponseDTO createUser(UserRequestDTO signupDto);
 	public List<UserResponseDTO> getAllUsers();
 	public UserResponseDTO getUserById(Long id);
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto);

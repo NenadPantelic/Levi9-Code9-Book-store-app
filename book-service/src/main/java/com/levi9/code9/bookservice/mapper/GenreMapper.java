@@ -3,16 +3,20 @@ package com.levi9.code9.bookservice.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+
+import com.levi9.code9.bookservice.dto.request.GenreRequestDTO;
 import com.levi9.code9.bookservice.dto.response.GenreResponseDTO;
 import com.levi9.code9.bookservice.model.Genre;
 
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
 
-	GenreResponseDTO mapGenreToGenreDTO(Genre genre);
+	GenreResponseDTO mapToDTO(Genre genre);
 
-	List<GenreResponseDTO> mapGenreListToGenreDTOList(List<Genre> genres);
+	List<GenreResponseDTO> mapToDTOList(Iterable<Genre> genres);
 
-	Genre mapGenreDTOToGenre(GenreResponseDTO dto);
+	List<GenreResponseDTO> mapToDTOList(List<Genre> genres);
+
+	Genre mapToEntity(GenreRequestDTO dto);
 
 }

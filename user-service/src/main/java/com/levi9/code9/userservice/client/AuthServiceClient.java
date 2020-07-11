@@ -17,7 +17,7 @@ import com.levi9.code9.userservice.dto.response.UserResponseDTO;
 public interface AuthServiceClient {
 
 	@PostMapping(value = "")
-	public UserResponseDTO registerUser(@RequestBody UserRequestDTO signupDto);
+	public UserResponseDTO createUser(@RequestBody UserRequestDTO signupDto);
 
 	@PutMapping(value = "{id}")
 	public UserResponseDTO updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO userDto);

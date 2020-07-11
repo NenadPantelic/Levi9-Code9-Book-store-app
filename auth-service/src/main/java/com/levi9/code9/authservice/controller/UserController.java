@@ -33,13 +33,13 @@ public class UserController {
 	private UserService _userService;
 
 	@PostMapping(value = "")
-	public UserResponseDTO addUser(@Valid @RequestBody UserRequestDTO signupDto) {
-		return getUserService().registerUser(signupDto);
+	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
+		return getUserService().createUser(signupDto);
 
 	}
 
 	@GetMapping(value = "")
-	public List<UserResponseDTO> getAllUsers() {
+	public List<UserResponseDTO> getUsers() {
 		return getUserService().getAllUsers();
 
 	}

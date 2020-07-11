@@ -9,9 +9,8 @@ import com.levi9.code9.authservice.dto.request.UserRequestDTO;
 import com.levi9.code9.authservice.dto.response.UserResponseDTO;
 
 public interface UserService {
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-
-	public UserResponseDTO registerUser(UserRequestDTO signupDto);
+	//public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+	public UserResponseDTO createUser(UserRequestDTO signupDto);
 	public List<UserResponseDTO> getAllUsers();
 	public UserResponseDTO getUserById(Long id);
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto);

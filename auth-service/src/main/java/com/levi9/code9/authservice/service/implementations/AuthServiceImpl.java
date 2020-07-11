@@ -47,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
 
 	}
 
+	@Override
 	public SigninResponseDTO signin(SigninRequestDTO credentialsDto) {
 		try {
 			String username = credentialsDto.getUsername();

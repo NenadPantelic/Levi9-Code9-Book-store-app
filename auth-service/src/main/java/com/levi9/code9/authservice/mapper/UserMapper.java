@@ -14,10 +14,10 @@ import com.levi9.code9.authservice.model.User;
 public interface UserMapper {
 
 	@Mappings({ @Mapping(target = "roles", expression = "java(user.getStringRoles())") })
-	UserResponseDTO mapUserToUserDTO(User user);
+	UserResponseDTO mapToDTO(User user);
 
-	List<UserResponseDTO> mapUserListToUserDTOList(List<User> users);
+	List<UserResponseDTO> mapToDTOList(List<User> users);
 
-	User mapUserDTOToUser(UserRequestDTO dto);
+	User mapToEntity(UserRequestDTO dto);
 
 }

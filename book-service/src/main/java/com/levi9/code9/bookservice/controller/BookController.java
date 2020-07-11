@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.levi9.code9.bookservice.dto.request.GenreRequestDTO;
-import com.levi9.code9.bookservice.dto.response.GenreResponseDTO;
-import com.levi9.code9.bookservice.service.GenreService;
+import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
+import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
+import com.levi9.code9.bookservice.service.BookService;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -25,38 +25,36 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/genres/")
-public class GenreController {
-
+@RequestMapping(value = "/api/v1/books/")
+public class BookController {
 	@Autowired
-	private GenreService _genreService;
+	private BookService _bookService;
 
 	@PreAuthorize("hasPrivilege('ADMIN')")
 	@PostMapping
-	public GenreResponseDTO createGenre(@RequestBody GenreRequestDTO genreDTO) {
-		return getGenreService().createGenre(genreDTO);
+	public BookResponseDTO createBook(@RequestBody BookRequestDTO bookDTO) {
+		return getBookService().createBook(bookDTO);
 	}
 
 	@GetMapping
-	public List<GenreResponseDTO> getGenres() {
-		return getGenreService().getAllGenres();
+	public List<BookResponseDTO> getBooks() {
+		return getBookService().getAllBooks();
 	}
 
 	@GetMapping(value = "{id}")
-	public GenreResponseDTO getGenre(@PathVariable("id") Long id) {
-		return getGenreService().getGenreById(id);
+	public BookResponseDTO getBook(@PathVariable("id") Long id) {
+		return getBookService().getBookById(id);
 	}
 
 	@PreAuthorize("hasPrivilege('ADMIN')")
 	@PutMapping(value = "{id}")
-	public GenreResponseDTO updateGenre(@PathVariable("id") Long id, @RequestBody GenreRequestDTO genreDTO) {
-		return getGenreService().updateGenre(id, genreDTO);
+	public BookResponseDTO updateBook(@PathVariable("id") Long id, @RequestBody BookRequestDTO bookDTO) {
+		return getBookService().updateBook(id, bookDTO);
 	}
 
 	@PreAuthorize("hasPrivilege('ADMIN')")
 	@DeleteMapping(value = "{id}")
 	public boolean deleteGenre(@PathVariable("id") Long id) {
-		return getGenreService().deleteGenre(id);
+		return getBookService().deleteBook(id);
 	}
-
 }

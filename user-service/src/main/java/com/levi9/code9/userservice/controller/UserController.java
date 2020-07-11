@@ -40,22 +40,22 @@ public class UserController {
 	private AuthServiceClient _authServiceClient;
 
 	@PostMapping(value = "")
-	public UserResponseDTO registerUser(@Valid @RequestBody UserRequestDTO signupDto) {
-		UserResponseDTO newUser = getUserService().registerUser(signupDto);
-		getAuthServiceClient().registerUser(signupDto);
+	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
+		UserResponseDTO newUser = getUserService().createUser(signupDto);
+		getAuthServiceClient().createUser(signupDto);
 		log.info("User successfully registered in auth microservice!");
 		return newUser;
 
 	}
 
 	@GetMapping(value = "")
-	public List<UserResponseDTO> getAllUsers() {
+	public List<UserResponseDTO> getUsers() {
 		return getUserService().getAllUsers();
 
 	}
 
 	@GetMapping(value = "{id}")
-	public UserResponseDTO getUserById(@PathVariable("id") Long id) {
+	public UserResponseDTO getUser(@PathVariable("id") Long id) {
 		return getUserService().getUserById(id);
 
 	}
