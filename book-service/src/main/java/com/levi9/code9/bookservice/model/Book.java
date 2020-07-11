@@ -5,10 +5,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
-
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,6 +65,10 @@ public class Book {
 	@Column(name = "price", nullable = false)
 	private BigDecimal _unitPrice;
 
+	@NotNull(message = "Book quantity must be provided.")
+	@Column(name = "quantity", nullable = false)
+	private Integer _quantity;
+
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
@@ -89,8 +93,9 @@ public class Book {
 	@Builder.Default
 	private LocalDate _releaseDate = LocalDate.of(2001, 1, 1);
 
-	@OneToMany(mappedBy = "_book")
-	private Set<BookAuthor> _authors;
+	@OneToMany(targetEntity = BookAuthorEntity.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinTable(name = "book_author")
+	private List<BookAuthorEntity> _authors;
 
 	@Column(name = "is_active")
 	@Builder.Default
@@ -99,7 +104,7 @@ public class Book {
 	public void addGenre(Genre genre) {
 		_genres.add(genre);
 	}
-	
+
 	public void addGenres(Collection<Genre> genres) {
 		_genres.addAll(genres);
 	}
@@ -108,6 +113,10 @@ public class Book {
 		List<String> genres = new ArrayList<String>();
 		_genres.forEach(genre -> genres.add(genre.getName()));
 		return genres;
+	}
+
+	public List<Long> getAuthorsIds() {
+		return getAuthors().stream().map(val -> val.getAuthorId()).collect(Collectors.toList());
 	}
 
 	@PreRemove

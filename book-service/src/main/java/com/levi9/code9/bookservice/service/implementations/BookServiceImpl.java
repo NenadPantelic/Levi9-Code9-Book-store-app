@@ -1,5 +1,6 @@
 package com.levi9.code9.bookservice.service.implementations;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,9 @@ import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
 import com.levi9.code9.bookservice.exception.ResourceNotFoundException;
 import com.levi9.code9.bookservice.mapper.BookMapper;
 import com.levi9.code9.bookservice.model.Book;
+import com.levi9.code9.bookservice.model.BookAuthorEntity;
 import com.levi9.code9.bookservice.model.Genre;
+import com.levi9.code9.bookservice.repository.BookAuthorRepository;
 import com.levi9.code9.bookservice.repository.BookRepository;
 import com.levi9.code9.bookservice.service.BookService;
 import com.levi9.code9.bookservice.service.GenreService;
@@ -31,6 +34,9 @@ public class BookServiceImpl implements BookService {
 	private BookRepository _bookRepository;
 
 	@Autowired
+	private BookAuthorRepository _bookAuthorRepository;
+
+	@Autowired
 	private GenreService _genreService;
 
 	@Autowired
@@ -41,20 +47,22 @@ public class BookServiceImpl implements BookService {
 		log.info("Adding new book...");
 		Book book = getBookMapper().mapToEntity(bookDTO);
 		Set<Genre> genres = new HashSet<>();
-		// Set<BookAuthor> authors = new HashSet<>();
-		bookDTO.getGenres().forEach(genreId -> {
+		List<BookAuthorEntity> authors = new ArrayList<>();
+		bookDTO.getGenresIds().forEach(genreId -> {
 			genres.add(getGenreService().fetchGenreById(genreId));
 		});
 
 		book.setGenres(genres);
 		book = getBookRepository().save(book);
-//		bookDTO.getAuthors().forEach(authorId -> {
-//			BookAuthor author = new BookAuthor();
-//			author.setBook(book);
-//			author.setAuthorId(authorId);
-//			get
-//			authors.add();
-//		});
+		for (Long authorId : bookDTO.getAuthorsIds()) {
+			BookAuthorEntity author = new BookAuthorEntity();
+			author.setAuthorId(authorId);
+			author = getBookAuthorRepository().save(author);
+			authors.add(author);
+		}
+
+		book.setAuthors(authors);
+		book = getBookRepository().save(book);
 		log.info("Book successfully added.");
 		return getBookMapper().mapToDTO(book);
 	}
@@ -75,15 +83,15 @@ public class BookServiceImpl implements BookService {
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
 		Book book = fetchBookById(id);
 		log.info("Updating book with the id " + id);
-		Book newBook = getBookMapper().mapToEntity(bookDTO);
-		newBook.setId(id);
+		book = getBookMapper().mapToEntity(bookDTO);
+		book.setId(id);
 		Set<Genre> genres = new HashSet<>();
-		bookDTO.getGenres().forEach(genreId -> {
+		bookDTO.getGenresIds().forEach(genreId -> {
 			genres.add(getGenreService().fetchGenreById(genreId));
 		});
-		newBook.addGenres(genres);
-		newBook = getBookRepository().save(newBook);
-		return getBookMapper().mapToDTO(newBook);
+		book.setGenres(genres);
+		book = getBookRepository().save(book);
+		return getBookMapper().mapToDTO(book);
 	}
 
 	@Override

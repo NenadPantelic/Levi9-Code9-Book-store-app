@@ -2,6 +2,8 @@ package com.levi9.code9.bookservice.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,9 +33,9 @@ public class GenreController {
 	@Autowired
 	private GenreService _genreService;
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
-	public GenreResponseDTO createGenre(@RequestBody GenreRequestDTO genreDTO) {
+	public GenreResponseDTO createGenre(@Valid @RequestBody GenreRequestDTO genreDTO) {
 		return getGenreService().createGenre(genreDTO);
 	}
 
@@ -47,13 +49,13 @@ public class GenreController {
 		return getGenreService().getGenreById(id);
 	}
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
-	public GenreResponseDTO updateGenre(@PathVariable("id") Long id, @RequestBody GenreRequestDTO genreDTO) {
+	public GenreResponseDTO updateGenre(@Valid @PathVariable("id") Long id, @RequestBody GenreRequestDTO genreDTO) {
 		return getGenreService().updateGenre(id, genreDTO);
 	}
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
 	public boolean deleteGenre(@PathVariable("id") Long id) {
 		return getGenreService().deleteGenre(id);

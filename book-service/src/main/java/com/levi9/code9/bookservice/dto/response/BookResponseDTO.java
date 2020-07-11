@@ -13,14 +13,11 @@ public class BookResponseDTO {
 
 	private Long _id;
 	private String _title;
-
 	private String _description;
-
 	private BigDecimal _unitPrice;
-
 	private String _publisher;
-
 	private LocalDate _releaseDate;
 	private List<GenreResponseDTO> _genres;
-
+	private List<Long> _authorsIds;
+	private Integer _quantity;
 }

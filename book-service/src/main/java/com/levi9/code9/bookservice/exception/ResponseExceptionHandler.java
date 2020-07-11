@@ -2,6 +2,8 @@ package com.levi9.code9.bookservice.exception;
 
 import java.util.Date;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private final String _invalidJWTOrNonAuthMessage = "You're not allowed to access this resource. Your token is invalid or expired.";
-
-	@ExceptionHandler(Exception.class)
-	public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
-		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
-				request.getDescription(false));
-		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+	private final String _nullPointerExceptionMessage = "An error occured. Check request body or try again!";
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
@@ -67,27 +63,38 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(NullPointerException.class)
 	public final ResponseEntity<ExceptionResponse> nullPointerException(Exception ex, WebRequest request) {
-		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), _nullPointerExceptionMessage,
 				request.getDescription(false));
-		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public final ResponseEntity<ExceptionResponse> integrityViolationException(DataIntegrityViolationException ex,
-			WebRequest request) {
-		String message = getRootCause(ex).getMessage().toLowerCase();
+	public final ResponseEntity<ExceptionResponse> integrityViolationException(Exception ex, WebRequest request) {
+		String message = ExceptionUtils.getRootCause(ex).getMessage().toLowerCase();
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), message, request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
-//  http://stackoverflow.com/a/28565320/548473
-	public static Throwable getRootCause(Throwable t) {
-		Throwable result = t;
-		Throwable cause;
-
-		while (null != (cause = result.getCause()) && (result != cause)) {
-			result = cause;
-		}
-		return result;
+	// TODO: add this to every MS
+	@ExceptionHandler(ConstraintViolationException.class)
+	public final ResponseEntity<ExceptionResponse> constraintViolationException(ConstraintViolationException ex,
+			WebRequest request) {
+		String message = ExceptionUtils.getRootCause(ex).getMessage().toLowerCase();
+		StringBuilder builder = new StringBuilder();
+		ex.getConstraintViolations().forEach(constraint -> {
+			builder.append(constraint.getMessage());
+		});
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), builder.toString(),
+				request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
+
+	@ExceptionHandler(Exception.class)
+	public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+				request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	
 }

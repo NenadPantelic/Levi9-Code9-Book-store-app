@@ -2,6 +2,8 @@ package com.levi9.code9.bookservice.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,9 +32,9 @@ public class BookController {
 	@Autowired
 	private BookService _bookService;
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
-	public BookResponseDTO createBook(@RequestBody BookRequestDTO bookDTO) {
+	public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO bookDTO) {
 		return getBookService().createBook(bookDTO);
 	}
 
@@ -46,13 +48,13 @@ public class BookController {
 		return getBookService().getBookById(id);
 	}
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
-	public BookResponseDTO updateBook(@PathVariable("id") Long id, @RequestBody BookRequestDTO bookDTO) {
+	public BookResponseDTO updateBook(@PathVariable("id") Long id, @Valid @RequestBody BookRequestDTO bookDTO) {
 		return getBookService().updateBook(id, bookDTO);
 	}
 
-	@PreAuthorize("hasPrivilege('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
 	public boolean deleteGenre(@PathVariable("id") Long id) {
 		return getBookService().deleteBook(id);

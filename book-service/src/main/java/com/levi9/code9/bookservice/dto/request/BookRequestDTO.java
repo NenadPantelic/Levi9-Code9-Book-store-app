@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -21,14 +23,20 @@ public class BookRequestDTO {
 	@NotBlank(message = "Description cannot be blank. This is required field.")
 	private String _description;
 
-	@NotBlank(message = "Book price must be provided.")
+	@NotNull(message="Book price must be provided.")
+	@Min(value=1)
 	private BigDecimal _unitPrice;
 
 	@NotBlank(message = "Publisher name must be provided.")
 	private String _publisher;
-
+	
+	@NotNull(message="Book quantity must be provided.")
+	@Min(value=1)
+	private Integer _quantity;
+	
+	@NotNull(message = "Release date name must be provided.")
 	private LocalDate _releaseDate;
 
-	private List<Long> _genres;
-	private List<Long> _authors;
+	private List<Long> _genresIds;
+	private List<Long> _authorsIds;
 }
