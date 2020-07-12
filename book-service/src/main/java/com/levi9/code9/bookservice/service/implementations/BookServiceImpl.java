@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @Service
+@Transactional
 public class BookServiceImpl implements BookService {
 
 	@Autowired
@@ -80,6 +83,18 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	public List<BookResponseDTO> getBooksByGenre(Long genreId) {
+		log.info("Fetcing books by genre id = " + genreId + ".");
+		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenre(genreId));
+	}
+
+	@Override
+	public List<BookResponseDTO> getBooksByGenreName(String genreName) {
+		log.info("Fetcing books by genre = " + genreName + ".");
+		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenreName(genreName));
+	}
+
+	@Override
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
 		Book book = fetchBookById(id);
 		log.info("Updating book with the id " + id);
@@ -97,7 +112,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public boolean deleteBook(Long id) {
 		log.info("Deleting the book with the id " + id);
-		getBookRepository().deleteById(id);
+		getBookRepository().softDelete(id);
 		return true;
 	}
 
@@ -112,16 +127,6 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public List<BookResponseDTO> getBooksByIds(List<Long> ids) {
 		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
-	}
-
-	@Override
-	public List<BookResponseDTO> getBooksByGenre(Long genreId) {
-		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenre(genreId));
-	}
-
-	@Override
-	public List<BookResponseDTO> getBooksByGenreName(String genreName) {
-		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenreName(genreName));
 	}
 
 }

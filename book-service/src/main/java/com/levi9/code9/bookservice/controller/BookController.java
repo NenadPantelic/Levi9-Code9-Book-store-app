@@ -49,6 +49,16 @@ public class BookController {
 		return getBookService().getBookById(id);
 	}
 
+	@GetMapping(value = "", params = "genreId")
+	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId) {
+		return getBookService().getBooksByGenre(genreId);
+	}
+
+	@GetMapping(value = "", params = "genre")
+	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genre") String genreName) {
+		return getBookService().getBooksByGenreName(genreName);
+	}
+
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
 	public BookResponseDTO updateBook(@PathVariable("id") Long id, @Valid @RequestBody BookRequestDTO bookDTO) {
@@ -60,14 +70,5 @@ public class BookController {
 	public boolean deleteGenre(@PathVariable("id") Long id) {
 		return getBookService().deleteBook(id);
 	}
-	
-	@GetMapping(value="", params="genreId")
-	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId){
-		return getBookService().getBooksByGenre(genreId);
-	}
-	
-	@GetMapping(value="", params="genreName")
-	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genreName") String genreName){
-		return getBookService().getBooksByGenreName(genreName);
-	}
+
 }

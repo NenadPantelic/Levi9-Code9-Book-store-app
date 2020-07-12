@@ -21,12 +21,8 @@ import lombok.experimental.Accessors;
 
 //@Table//(uniqueConstraints = { @UniqueConstraint(columnNames = { "book_id", "author_id" }) })
 public class BookAuthorEntity {
-
 	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long _id;
-
+	// @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "author_id", nullable = false)
 	private Long _authorId;
 }

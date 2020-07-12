@@ -29,9 +29,6 @@ import lombok.experimental.Accessors;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	@Autowired
-//	private UserDetailsService _userDetailsService;
-
 	@Autowired
 	private JwtTokenFilter _tokenFilter;
 

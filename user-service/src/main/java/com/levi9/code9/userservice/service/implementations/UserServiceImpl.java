@@ -75,24 +75,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return getUserMapper().mapToDTOList(getUserRepository().findAll());
 	}
 
-	public User fetchUserById(Long id) {
-		log.info("Fetching user with id " + id);
-		Optional<User> user = getUserRepository().findById(id);
-		if (!user.isPresent()) {
-			throw new ResourceNotFoundException("The user with the given id doesn't exist.");
-		}
-		return user.get();
-	}
-
 	@Override
 	public UserResponseDTO getUserById(Long id) {
 		return getUserMapper().mapToDTO(fetchUserById(id));
 	}
 
+	public User fetchUserById(Long id) {
+		log.info("Fetching user with id = " + id);
+		User user = getUserRepository().findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("The user with the given id doesn't exist."));
+		return user;
+	}
+
 	@Override
-	// @Transactional
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
-		log.info("Updating user...");
+		log.info("Updating user with the id = " + id);
 		User user = fetchUserById(id);
 		User updatedUser = getUserMapper().mapToEntity(userDto);
 		updatedUser.setId(id);
@@ -104,8 +101,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	}
 
-	// @Transactional
 	public boolean deleteUser(Long id) {
+		log.info("Deleting the user with the id =" + id);
 		getUserRepository().deleteById(id);
 		return true;
 

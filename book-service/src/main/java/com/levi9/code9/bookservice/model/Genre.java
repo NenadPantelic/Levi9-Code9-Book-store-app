@@ -43,16 +43,17 @@ public class Genre {
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
-	private Date _createdAt;
+	@Builder.Default
+	private Date _createdAt = new Date();
 
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")
-	private Date _updatedAt;
+	@Builder.Default
+	private Date _updatedAt = new Date();
 	
 //	@ManyToMany(mappedBy = "_genres")
 //	@Builder.Default
 //	private Set<Book> _books = new HashSet<Book>();
-
 
 }
