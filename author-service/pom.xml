@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.1.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.levi9.code9</groupId>
-	<artifactId>book-service</artifactId>
+	<artifactId>author-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>book-service</name>
-	<description>Book microservice app</description>
+	<name>author-service</name>
+	<description>Author microservice</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -131,9 +130,9 @@
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<configuration>
-					<url>jdbc:mysql://localhost:3306/Code9_Book_Service_Book_Store?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=false</url>
-					<user>code9_user_books</user>
-					<password>tDZQp]Q8JxZDNpZ77(ey</password>
+					<url>jdbc:mysql://localhost:3306/Code9_Author_Service_Book_Store?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=false</url>
+					<user>code9_user_authors</user>
+					<password>Vj]zA7;K}qb]-kC2xLGv</password>
 					<baselineOnMigrate>true</baselineOnMigrate>
 					<baselineVersion>0</baselineVersion>
 				</configuration>
@@ -166,4 +165,4 @@
 		</plugins>
 	</build>
 
-</project>	
+</project>

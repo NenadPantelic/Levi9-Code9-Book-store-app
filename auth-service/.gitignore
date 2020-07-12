@@ -34,4 +34,7 @@ build/
 ### Misc ###
 **/bin
 .zip
+.settings
+.mvn
+
 

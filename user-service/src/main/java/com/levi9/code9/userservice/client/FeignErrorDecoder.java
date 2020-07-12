@@ -24,7 +24,6 @@ public class FeignErrorDecoder implements ErrorDecoder {
 		if (response.status() > 299) {
 			try {
 				originalResponseMessage = IOUtils.toString(response.body().asInputStream());
-				// log.info(Utils.parseResponseToString(str).toString());
 			} catch (IOException e) {
 
 			}
