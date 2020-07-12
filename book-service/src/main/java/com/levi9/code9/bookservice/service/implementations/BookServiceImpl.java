@@ -114,4 +114,14 @@ public class BookServiceImpl implements BookService {
 		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
 	}
 
+	@Override
+	public List<BookResponseDTO> getBooksByGenre(Long genreId) {
+		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenre(genreId));
+	}
+
+	@Override
+	public List<BookResponseDTO> getBooksByGenreName(String genreName) {
+		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenreName(genreName));
+	}
+
 }

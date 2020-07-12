@@ -16,5 +16,8 @@ public interface BookService {
 	public boolean deleteBook(Long id);
 	public Book fetchBookById(Long id);
 	public List<BookResponseDTO> getBooksByIds(List<Long> ids);
+	public List<BookResponseDTO> getBooksByGenre(Long genreId);
+	public List<BookResponseDTO> getBooksByGenreName(String genreName);
+
 
 }

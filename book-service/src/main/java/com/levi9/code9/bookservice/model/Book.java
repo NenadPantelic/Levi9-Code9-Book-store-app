@@ -109,11 +109,11 @@ public class Book {
 		_genres.addAll(genres);
 	}
 
-	public List<String> getGenreNames() {
-		List<String> genres = new ArrayList<String>();
-		_genres.forEach(genre -> genres.add(genre.getName()));
-		return genres;
-	}
+//	public List<String> getGenreNames() {
+//		List<String> genres = new ArrayList<String>();
+//		_genres.forEach(genre -> genres.add(genre.getName()));
+//		return genres;
+//	}
 
 	public List<Long> getAuthorsIds() {
 		return getAuthors().stream().map(val -> val.getAuthorId()).collect(Collectors.toList());

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
@@ -58,5 +59,15 @@ public class BookController {
 	@DeleteMapping(value = "{id}")
 	public boolean deleteGenre(@PathVariable("id") Long id) {
 		return getBookService().deleteBook(id);
+	}
+	
+	@GetMapping(value="", params="genreId")
+	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId){
+		return getBookService().getBooksByGenre(genreId);
+	}
+	
+	@GetMapping(value="", params="genreName")
+	public List<BookResponseDTO> getBooksByGenre(@RequestParam("genreName") String genreName){
+		return getBookService().getBooksByGenreName(genreName);
 	}
 }

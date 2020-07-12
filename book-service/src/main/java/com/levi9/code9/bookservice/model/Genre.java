@@ -1,6 +1,7 @@
 package com.levi9.code9.bookservice.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -50,7 +51,8 @@ public class Genre {
 	private Date _updatedAt;
 	
 //	@ManyToMany(mappedBy = "_genres")
-//	private Set<Book> _books;
+//	@Builder.Default
+//	private Set<Book> _books = new HashSet<Book>();
 
 
 }
