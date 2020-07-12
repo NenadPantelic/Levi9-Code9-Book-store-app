@@ -10,7 +10,7 @@ import com.levi9.code9.authservice.dto.response.SigninResponseDTO;
 import com.levi9.code9.authservice.model.User;
 
 public interface AuthService {
-	public Optional<User> findUserByUsername(String username);
+	public User findUserByUsername(String username);
 	public SigninResponseDTO signin(SigninRequestDTO credentialsDto);
 
 }

@@ -42,9 +42,11 @@ public class AuthServiceImpl implements AuthService {
 	PasswordEncoder _passwordEncoder;
 
 	@Override
-	public Optional<User> findUserByUsername(String username) {
-		return getUserRepository().findUserBy_username(username);
-
+	public User findUserByUsername(String username) {
+		log.info("Fetching a user with the username = " + username);
+		User user = getUserRepository().findUserBy_username(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found!"));
+		return user;
 	}
 
 	@Override
@@ -55,22 +57,18 @@ public class AuthServiceImpl implements AuthService {
 			log.info("Authentication in progress.....");
 
 			getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(username, password));
-			Optional<User> user = findUserByUsername(username);
+			User user = findUserByUsername(username);
 			String token = "";
 			List<String> roles = null;
 
-			if (user.isPresent() == true) {
-				roles = user.get().getStringRoles();
-				String pwd = user.get().getPassword();
-				if (getPasswordEncoder().matches(password, pwd)) {
-					token = getTokenProvider().createToken(username, roles);
-				} else {
-					throw new BadCredentialsException("Invalid username/password supplied!");
-				}
-
+			roles = user.getStringRoles();
+			String pwd = user.getPassword();
+			if (getPasswordEncoder().matches(password, pwd)) {
+				token = getTokenProvider().createToken(username, roles);
 			} else {
-				throw new UsernameNotFoundException("Username " + username + " not found!");
+				throw new BadCredentialsException("Invalid username/password supplied!");
 			}
+
 			SigninResponseDTO responseDto = new SigninResponseDTO(username, token, roles);
 			return responseDto;
 		} catch (AuthenticationException e) {

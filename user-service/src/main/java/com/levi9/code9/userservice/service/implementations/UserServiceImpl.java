@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.userservice.client.AuthServiceClient;
 import com.levi9.code9.userservice.dto.request.UserRequestDTO;
 import com.levi9.code9.userservice.dto.response.UserResponseDTO;
 import com.levi9.code9.userservice.exception.ResourceNotFoundException;
@@ -33,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Service
 @Transactional
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository _userRepository;
 
@@ -46,16 +45,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private PasswordEncoder _passwordEncoder;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = getUserRepository().findUserBy_username(username);
-		if (user.isPresent() == true) {
-			return user.get();
-		} else {
-			throw new UsernameNotFoundException("Username " + username + " not found");
-		}
-
-	}
 
 	@Override
 	public UserResponseDTO createUser(UserRequestDTO userDto) {
@@ -64,7 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
 		user = getUserRepository().save(user);
-
+		log.info("User successfully added.");
 		UserResponseDTO dto = getUserMapper().mapToDTO(user);
 		return dto;
 	}
@@ -97,6 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
 		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
+		log.info("User successfully updated.");
 		return getUserMapper().mapToDTO(updatedUser);
 
 	}
@@ -104,6 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public boolean deleteUser(Long id) {
 		log.info("Deleting the user with the id =" + id);
 		getUserRepository().deleteById(id);
+		log.info("User successfully deleted.");
 		return true;
 
 	}

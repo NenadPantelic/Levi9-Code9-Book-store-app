@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private final String _invalidJWTOrNonAuthMessage = "You're not allowed to access this resource. Your token is invalid or expired.";
-	private final String _nullPointerExceptionMessage = "An error occured. Check request body or try again!";
+	private final String _nullPointerExceptionMessage = "An error occured. Check again the request body and try again!";
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {

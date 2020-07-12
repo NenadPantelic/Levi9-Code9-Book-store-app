@@ -47,7 +47,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookResponseDTO createBook(BookRequestDTO bookDTO) {
-		log.info("Adding a new book...");
+		log.info("Adding new book...");
 		Book book = getBookMapper().mapToEntity(bookDTO);
 		Set<Genre> genres = new HashSet<>();
 		List<BookAuthorEntity> authors = new ArrayList<>();
@@ -72,7 +72,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<BookResponseDTO> getAllBooks() {
-		log.info("Fetching all books...");
+		log.info("Fetching books...");
 		return getBookMapper().mapToDTOList(getBookRepository().findAll());
 	}
 
@@ -84,7 +84,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<BookResponseDTO> getBooksByGenre(Long genreId) {
-		log.info("Fetching books by genre id = " + genreId + ".");
+		log.info("Fetcing books by genre id = " + genreId + ".");
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenre(genreId));
 	}
 
@@ -97,7 +97,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
 		Book book = fetchBookById(id);
-		log.info("Updating the book with the id " + id);
+		log.info("Updating book with the id " + id);
 		book = getBookMapper().mapToEntity(bookDTO);
 		book.setId(id);
 		Set<Genre> genres = new HashSet<>();
@@ -106,7 +106,6 @@ public class BookServiceImpl implements BookService {
 		});
 		book.setGenres(genres);
 		book = getBookRepository().save(book);
-		log.info("Book successfully updated.");
 		return getBookMapper().mapToDTO(book);
 	}
 
@@ -114,7 +113,6 @@ public class BookServiceImpl implements BookService {
 	public boolean deleteBook(Long id) {
 		log.info("Deleting the book with the id " + id);
 		getBookRepository().softDelete(id);
-		log.info("Book successfully deleted.");
 		return true;
 	}
 

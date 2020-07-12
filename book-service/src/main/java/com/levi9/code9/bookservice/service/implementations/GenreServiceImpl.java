@@ -34,7 +34,7 @@ public class GenreServiceImpl implements GenreService {
 
 	@Override
 	public GenreResponseDTO createGenre(GenreRequestDTO genreDTO) {
-		log.info("Adding new genre...");
+		log.info("Adding a new genre...");
 		Genre genre = getGenreMapper().mapToEntity(genreDTO);
 		getGenreRepository().save(genre);
 		log.info("Genre successfully added.");
@@ -43,7 +43,7 @@ public class GenreServiceImpl implements GenreService {
 
 	@Override
 	public List<GenreResponseDTO> getAllGenres() {
-		log.info("Fetching genres...");
+		log.info("Fetching all genres...");
 		return getGenreMapper().mapToDTOList(getGenreRepository().findAll());
 	}
 
@@ -56,23 +56,25 @@ public class GenreServiceImpl implements GenreService {
 	@Override
 	public GenreResponseDTO updateGenre(Long id, GenreRequestDTO genreDTO) {
 		Genre genre = fetchGenreById(id);
-		log.info("Updating genre with the id " + id);
+		log.info("Updating the genre with the id = " + id);
 		Genre newGenre = getGenreMapper().mapToEntity(genreDTO);
 		newGenre.setId(id);
 		newGenre = getGenreRepository().save(newGenre);
+		log.info("Genre successfully updated.");
 		return getGenreMapper().mapToDTO(newGenre);
 	}
 
 	@Override
 	public boolean deleteGenre(Long id) {
-		log.info("Deleting the genre with the id " + id);
+		log.info("Deleting the genre with id = " + id);
 		getGenreRepository().deleteById(id);
+		log.info("Genre successfully deleted.");
 		return true;
 	}
 
 	@Override
 	public Genre fetchGenreById(Long id) {
-		log.info("Fetching genre with id " + id);
+		log.info("Fetching the genre with id = " + id);
 		Genre genre = getGenreRepository().findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("The genre with the id = " + id + " doesn't exist."));
 		return genre;

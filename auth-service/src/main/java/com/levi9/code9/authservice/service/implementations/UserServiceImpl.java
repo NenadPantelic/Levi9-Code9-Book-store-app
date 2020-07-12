@@ -1,14 +1,10 @@
 package com.levi9.code9.authservice.service.implementations;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Service
-//@Transactional
+@Transactional
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository _userRepository;
@@ -44,17 +40,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder _passwordEncoder;
-
-//	@Override
-//	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		Optional<User> user = getUserRepository().findUserBy_username(username);
-//		if (user.isPresent() == true) {
-//			return user.get();
-//		} else {
-//			throw new UsernameNotFoundException("Username " + username + " not found");
-//		}
-//
-//	}
 
 	@Override
 	public UserResponseDTO createUser(UserRequestDTO userDto) {
@@ -74,12 +59,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public User fetchUserById(Long id) {
-		log.info("Fetching user with id " + id);
-		Optional<User> user = getUserRepository().findById(id);
-		if (!user.isPresent()) {
-			throw new ResourceNotFoundException("The user with the given id doesn't exist.");
-		}
-		return user.get();
+		log.info("Fetching a user with id = " + id);
+		User user = getUserRepository().findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("The user with the given id doesn't exist."));
+		return user;
 	}
 
 	@Override
@@ -89,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
-		log.info("Updating user...");
+		log.info("Updating the user with the id = " + id);
 		User user = fetchUserById(id);
 		User updatedUser = getUserMapper().mapToEntity(userDto);
 		updatedUser.setId(id);
@@ -108,6 +91,5 @@ public class UserServiceImpl implements UserService {
 		return true;
 
 	}
-
 
 }
