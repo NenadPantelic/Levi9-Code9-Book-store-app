@@ -29,9 +29,6 @@ import lombok.experimental.Accessors;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	@Autowired
-//	private UserDetailsService _userDetailsService;
-
 	@Autowired
 	private JwtTokenFilter _tokenFilter;
 
@@ -54,11 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		// anyRequest()
 	}
-
-//	@Override
-//	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.userDetailsService(getUserDetailsService()).passwordEncoder(passwordEncoder());
-//	}
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

@@ -56,12 +56,10 @@ public class BookServiceImpl implements BookService {
 		});
 
 		book.setGenres(genres);
-		book = getBookRepository().save(book);
 		for (Long authorId : bookDTO.getAuthorsIds()) {
-			BookAuthorEntity author = new BookAuthorEntity();
-			author.setAuthorId(authorId);
-			author = getBookAuthorRepository().save(author);
-			authors.add(author);
+			BookAuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId)
+					.orElse(new BookAuthorEntity(authorId));
+			authors.add(bookAuthor);
 		}
 
 		book.setAuthors(authors);

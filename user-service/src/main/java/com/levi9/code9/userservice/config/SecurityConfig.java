@@ -31,9 +31,6 @@ import lombok.experimental.Accessors;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UserDetailsService _userDetailsService;
-
-	@Autowired
 	private JwtTokenFilter _tokenFilter;
 
 	@Autowired
@@ -51,11 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(getAuthEntryPoint()).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(getUserDetailsService()).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

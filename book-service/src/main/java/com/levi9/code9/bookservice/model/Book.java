@@ -2,6 +2,7 @@ package com.levi9.code9.bookservice.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,7 +28,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -95,10 +95,14 @@ public class Book {
 	@Builder.Default
 	private LocalDate _releaseDate = LocalDate.of(2001, 1, 1);
 
-	@OneToMany(targetEntity = BookAuthorEntity.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST,
-			CascadeType.REFRESH }, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinTable(name = "book_author")
-	private List<BookAuthorEntity> _authors;
+	
+//	@OneToMany(targetEntity = BookAuthorEntity.class, cascade= CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)
+//	@JoinTable(name = "book_author")
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+	@JoinTable(name = "book_author", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "author_id") })
+	@Builder.Default
+	private List<BookAuthorEntity> _authors = new ArrayList<BookAuthorEntity>();
 
 	@Column(name = "is_active")
 	@Builder.Default
