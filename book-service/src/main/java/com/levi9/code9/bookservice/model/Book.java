@@ -113,7 +113,7 @@ public class Book {
 	}
 
 	public List<Long> getAuthorsIds() {
-		return getAuthors().stream().map(val -> val.getAuthorId()).collect(Collectors.toList());
+		return getAuthors().stream().map(val -> val.getId()).collect(Collectors.toList());
 	}
 
 	@PreRemove

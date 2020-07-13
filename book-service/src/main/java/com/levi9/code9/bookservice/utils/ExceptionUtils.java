@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.exception;
+package com.levi9.code9.bookservice.utils;
 
 public class ExceptionUtils {
 	// helper

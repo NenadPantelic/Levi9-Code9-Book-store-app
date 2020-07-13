@@ -63,8 +63,13 @@ public class AuthorController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(value = "book-authors/")
-	public void addAuthorsToBook(@RequestBody BookAuthorsRequestDTO bookAuthors) {
-		getAuthorService().addAuthorsToBook(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	public void addBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		getAuthorService().addBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	}
+
+	@GetMapping(value = "book-authors/", params = "bookId")
+	public List<AuthorResponseDTO> getBookAuthorsT(@RequestParam Long bookId) {
+		return getAuthorService().getBookAuthors(bookId);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

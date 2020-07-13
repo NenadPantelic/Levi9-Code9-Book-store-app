@@ -18,6 +18,7 @@ public class BookResponseDTO {
 	private String _publisher;
 	private LocalDate _releaseDate;
 	private List<GenreResponseDTO> _genres;
-	private List<Long> _authorsIds;
+	//private List<Long> _authorsIds;
 	private Integer _quantity;
+	private List<AuthorResponseDTO> _authors;
 }

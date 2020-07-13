@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.levi9.code9.bookservice.client.AuthorServiceClient;
+import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
+import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
+import com.levi9.code9.bookservice.security.JwtTokenProvider;
 import com.levi9.code9.bookservice.service.BookService;
 
 import lombok.Getter;
@@ -30,13 +34,24 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(value = "/api/v1/books/")
 public class BookController {
+	
+	@Autowired
+	private AuthorServiceClient _authorService;
+	
 	@Autowired
 	private BookService _bookService;
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
 	public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO bookDTO) {
-		return getBookService().createBook(bookDTO);
+		BookResponseDTO response =  getBookService().createBook(bookDTO);
+		boolean b = getAuthorService().test(JwtTokenProvider.jwtToken);
+		 
+		getAuthorService().addBookAuthors(new BookAuthorsRequestDTO(response.getId(), bookDTO.getAuthorsIds()));//, JwtTokenProvider.jwtToken);
+		List<AuthorResponseDTO> authors = getAuthorService().getBookAuthors(response.getId());//, JwtTokenProvider.jwtToken);
+		//(response.getId(), JwtTokenProvider.jwtToken);
+		response.setAuthors(authors);
+		return response;
 	}
 
 	@GetMapping

@@ -45,6 +45,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 				
 			}
 		}
+		System.out.println("TOKEN VALUE " + JwtTokenProvider.jwtToken);
 		chain.doFilter(request, response);
 	}
 

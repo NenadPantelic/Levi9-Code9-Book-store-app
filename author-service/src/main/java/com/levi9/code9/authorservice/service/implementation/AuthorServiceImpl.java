@@ -98,7 +98,7 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void addAuthorToBook(Long authorId, Long bookId) {
+	public void addBookAuthor(Long authorId, Long bookId) {
 		log.info("Adding author with an id = " + authorId + " to book with an id = " + bookId);
 		Author author = fetchAuthorById(authorId);
 		BookEntity book = getBookRepository().findById(bookId).orElse(new BookEntity(bookId));
@@ -108,9 +108,9 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void addAuthorsToBook(List<Long> authorsIds, Long bookId) {
+	public void addBookAuthors(List<Long> authorsIds, Long bookId) {
 		for (Long authorId : authorsIds) {
-			addAuthorToBook(authorId, bookId);
+			addBookAuthor(authorId, bookId);
 		}
 
 	}
@@ -123,6 +123,12 @@ public class AuthorServiceImpl implements AuthorService {
 		author.removeBook(book);
 		getAuthorRepository().save(author);
 
+	}
+
+	@Override
+	public List<AuthorResponseDTO> getBookAuthors(Long bookId) {
+		List<Author> authors = getAuthorRepository().findAuthorsByBook(bookId);
+		return getAuthorMapper().mapToDTOList(authors);
 	}
 
 	@Override
@@ -147,7 +153,7 @@ public class AuthorServiceImpl implements AuthorService {
 		// add new authors
 		for (Long authorId : authorsIds) {
 			if (!currentAuthors.contains(authorId)) {
-				addAuthorToBook(authorId, bookId);
+				addBookAuthor(authorId, bookId);
 			}
 		}
 	}
