@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.service.implementations;
+package com.levi9.code9.bookservice.service.implementation;
 
 import java.util.List;
 

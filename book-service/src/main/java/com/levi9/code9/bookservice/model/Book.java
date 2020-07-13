@@ -20,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,14 +34,12 @@ import org.hibernate.annotations.Where;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 @Accessors(prefix = "_")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @Entity
 @Where(clause = "is_active=true")
 public class Book {
@@ -52,8 +49,8 @@ public class Book {
 	@Column(name = "id")
 	private Long _id;
 
-	@NotBlank(message = "Book name must be provided.")
-	@Size(max = 100, message = "Length of the book name must be between 1 and 100.")
+	@NotBlank(message = "Book title must be provided.")
+	@Size(max = 100, message = "Length of the book title must be between 1 and 100.")
 	@Column(name = "title", unique = true, nullable = false)
 	private String _title;
 
@@ -101,7 +98,7 @@ public class Book {
 	@JoinTable(name = "book_author", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "author_id") })
 	@Builder.Default
-	private List<BookAuthorEntity> _authors = new ArrayList<BookAuthorEntity>();
+	private List<AuthorEntity> _authors = new ArrayList<AuthorEntity>();
 
 	@Column(name = "is_active")
 	@Builder.Default

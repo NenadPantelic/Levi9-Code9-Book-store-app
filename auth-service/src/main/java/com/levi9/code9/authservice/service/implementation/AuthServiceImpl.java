@@ -1,4 +1,4 @@
-package com.levi9.code9.authservice.service.implementations;
+package com.levi9.code9.authservice.service.implementation;
 
 import java.util.List;
 import java.util.Optional;

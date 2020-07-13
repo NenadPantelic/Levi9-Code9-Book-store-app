@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.service.implementations;
+package com.levi9.code9.bookservice.service.implementation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
 import com.levi9.code9.bookservice.exception.ResourceNotFoundException;
 import com.levi9.code9.bookservice.mapper.BookMapper;
 import com.levi9.code9.bookservice.model.Book;
-import com.levi9.code9.bookservice.model.BookAuthorEntity;
+import com.levi9.code9.bookservice.model.AuthorEntity;
 import com.levi9.code9.bookservice.model.Genre;
 import com.levi9.code9.bookservice.repository.BookAuthorRepository;
 import com.levi9.code9.bookservice.repository.BookRepository;
@@ -50,14 +50,14 @@ public class BookServiceImpl implements BookService {
 		log.info("Adapting the book...");
 		Book book = getBookMapper().mapToEntity(bookDTO);
 		Set<Genre> genres = new HashSet<>();
-		List<BookAuthorEntity> authors = new ArrayList<>();
+		List<AuthorEntity> authors = new ArrayList<>();
 		bookDTO.getGenresIds().forEach(genreId -> {
 			genres.add(getGenreService().fetchGenreById(genreId));
 		});
 		book.setGenres(genres);
 		for (Long authorId : bookDTO.getAuthorsIds()) {
-			BookAuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId)
-					.orElse(new BookAuthorEntity(authorId));
+			AuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId)
+					.orElse(new AuthorEntity(authorId));
 			authors.add(bookAuthor);
 		}
 
@@ -100,7 +100,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
 		Book book = fetchBookById(id);
-		log.info("Updating the book with the id " + id);
+		log.info("Updating the book with an id = " + id);
 		book = buildBook(bookDTO);
 		book.setId(id);
 		book = getBookRepository().save(book);
@@ -110,7 +110,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public boolean deleteBook(Long id) {
-		log.info("Deleting the book with the id " + id);
+		log.info("Deleting the book with an id = " + id);
 		getBookRepository().softDelete(id);
 		log.info("Book successfully deleted.");
 		return true;
@@ -118,7 +118,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Book fetchBookById(Long id) {
-		log.info("Fetching book with id " + id);
+		log.info("Fetching book with an id = " + id);
 		Book book = getBookRepository().findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("The book with the id = " + id + " doesn't exist."));
 		return book;

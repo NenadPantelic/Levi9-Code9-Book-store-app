@@ -1,4 +1,4 @@
-package com.levi9.code9.userservice.service.implementations;
+package com.levi9.code9.userservice.service.implementation;
 
 import java.util.List;
 
