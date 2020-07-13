@@ -1,0 +1,14 @@
+1) Users
+
+POST -> Auth i Shopping
+DELETE -> Auth i Shopping (obrisati shopping cart za tog korisnika i njegovu istoriju kupovine)
+UPDATE -> Auth
+
+2) Books
+POST -> Author, Search
+DELETE -> Author, Search
+UPDATE -> Search
+
+3) Authors
+
+

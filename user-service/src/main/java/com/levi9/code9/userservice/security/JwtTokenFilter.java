@@ -1,6 +1,8 @@
 package com.levi9.code9.userservice.security;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,7 +31,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 
 	@Autowired
 	private JwtTokenProvider _tokenProvider;
-
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
@@ -39,6 +41,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 			if (auth != null) {
 				log.info("Authenticating user....");
 				SecurityContextHolder.getContext().setAuthentication(auth);
+				getTokenProvider().setUserContext(token);
+				
 			}
 		}
 		chain.doFilter(request, response);

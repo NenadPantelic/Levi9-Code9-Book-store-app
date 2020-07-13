@@ -47,16 +47,18 @@ public class JwtTokenProvider {
 	@Value("${security.jwt.token.header.prefix:Bearer }")
 	private String _headerPrefix;
 
-	public static String JWT_TOKEN = null;
+	public static final ThreadLocal<UserContext> USER_CONTEXT = new ThreadLocal<UserContext>();
+	public static String jwtToken = null;
 
 	@PostConstruct
 	protected void init() {
 		_secretKey = Base64.getEncoder().encodeToString(_secretKey.getBytes());
 	}
 
-	public String createToken(String username, String role) {
+	public String createToken(Long userId, String username, String roles) {
 		Claims claims = Jwts.claims().setSubject(username);
-		claims.put("roles", role);
+		claims.put("userId", userId);
+		claims.put("roles", roles);
 
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + getValidityInMilliseconds());
@@ -86,13 +88,30 @@ public class JwtTokenProvider {
 		return authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
 
+	private Long getUserId(String token) {
+		Claims claims = getClaimsFromToken(token);
+		@SuppressWarnings("unchecked")
+		// recode this
+		Long userId = Long.parseLong(claims.get("userId").toString());
+		return userId;
+	}
+
 	public String resolveToken(HttpServletRequest req) {
 		String bearerToken = req.getHeader(getJwtHeader());
 		if (bearerToken != null && bearerToken.startsWith(getHeaderPrefix())) {
-			JWT_TOKEN = bearerToken;
 			return bearerToken.substring(7, bearerToken.length());
 		}
 		return null;
+	}
+
+	public void setUserContext(String token) {
+		String username = getUsername(token);
+		List<GrantedAuthority> authorities = getAuthorities(token);
+		Long userId = getUserId(token);
+		jwtToken = token;
+		if (USER_CONTEXT.get() == null) {
+			USER_CONTEXT.set(new UserContext(userId, username, authorities));
+		}
 	}
 
 	public boolean validateToken(String token) {

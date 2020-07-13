@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
 			roles = user.getStringRoles();
 			String pwd = user.getPassword();
 			if (getPasswordEncoder().matches(password, pwd)) {
-				token = getTokenProvider().createToken(username, roles);
+				token = getTokenProvider().createToken(user.getId(), username, roles);
 			} else {
 				throw new BadCredentialsException("Invalid username/password supplied!");
 			}

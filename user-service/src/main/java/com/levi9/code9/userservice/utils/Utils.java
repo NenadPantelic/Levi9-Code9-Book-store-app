@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public class Utils {
 
 	public static Map<String, String> parseResponseToString(String responseBody) {
-		System.out.println("USAOOOOOOO OVDEEE");
 		String[] jsonParts = responseBody.substring(1, responseBody.length() - 1).split(",");
 		Map<String, String> map = (HashMap<String, String>) Arrays
 				.asList(responseBody.substring(1, responseBody.length() - 1).split(",")).stream().map(s -> s.split(":"))

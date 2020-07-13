@@ -19,6 +19,7 @@ import com.levi9.code9.userservice.mapper.UserMapper;
 import com.levi9.code9.userservice.model.User;
 import com.levi9.code9.userservice.repository.RoleRepository;
 import com.levi9.code9.userservice.repository.UserRepository;
+import com.levi9.code9.userservice.security.JwtTokenProvider;
 import com.levi9.code9.userservice.service.UserService;
 
 import lombok.Getter;
@@ -32,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Service
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository _userRepository;
 
@@ -45,13 +46,18 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private PasswordEncoder _passwordEncoder;
 
+	@Override
+	public User buildUser(UserRequestDTO userDTO) {
+		User user = getUserMapper().mapToEntity(userDTO);
+		user.setPassword(getPasswordEncoder().encode(userDTO.getPassword()));
+		user.addRole(getRoleRepository().findById(userDTO.getRoleId()).get());
+		return user;
+	}
 
 	@Override
-	public UserResponseDTO createUser(UserRequestDTO userDto) {
+	public UserResponseDTO createUser(UserRequestDTO userDTO) {
 		log.info("Adding new user...");
-		User user = getUserMapper().mapToEntity(userDto);
-		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
-		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		User user = buildUser(userDTO);
 		user = getUserRepository().save(user);
 		log.info("User successfully added.");
 		UserResponseDTO dto = getUserMapper().mapToDTO(user);
@@ -77,14 +83,11 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
+	public UserResponseDTO updateUser(Long id, UserRequestDTO userDTO) {
 		log.info("Updating user with the id = " + id);
 		User user = fetchUserById(id);
-		User updatedUser = getUserMapper().mapToEntity(userDto);
+		User updatedUser = buildUser(userDTO);
 		updatedUser.setId(id);
-		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
-		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
-		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
 		log.info("User successfully updated.");
 		return getUserMapper().mapToDTO(updatedUser);

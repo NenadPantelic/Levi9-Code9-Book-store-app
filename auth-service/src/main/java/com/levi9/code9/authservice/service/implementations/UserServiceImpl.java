@@ -42,12 +42,19 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder _passwordEncoder;
 
 	@Override
-	public UserResponseDTO createUser(UserRequestDTO userDto) {
+	public User buildUser(UserRequestDTO userDTO) {
+		User user = getUserMapper().mapToEntity(userDTO);
+		user.setPassword(getPasswordEncoder().encode(userDTO.getPassword()));
+		user.addRole(getRoleRepository().findById(userDTO.getRoleId()).get());
+		return user;
+	}
+
+	@Override
+	public UserResponseDTO createUser(UserRequestDTO userDTO) {
 		log.info("Adding new user...");
-		User user = getUserMapper().mapToEntity(userDto);
-		user.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
-		user.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
+		User user = buildUser(userDTO);
 		user = getUserRepository().save(user);
+		log.info("User successfully added.");
 		UserResponseDTO dto = getUserMapper().mapToDTO(user);
 		return dto;
 	}
@@ -58,36 +65,34 @@ public class UserServiceImpl implements UserService {
 		return getUserMapper().mapToDTOList(getUserRepository().findAll());
 	}
 
+	@Override
+	public UserResponseDTO getUserById(Long id) {
+		return getUserMapper().mapToDTO(fetchUserById(id));
+	}
+
 	public User fetchUserById(Long id) {
-		log.info("Fetching a user with id = " + id);
+		log.info("Fetching user with id = " + id);
 		User user = getUserRepository().findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("The user with the given id doesn't exist."));
 		return user;
 	}
 
 	@Override
-	public UserResponseDTO getUserById(Long id) {
-		return getUserMapper().mapToDTO(fetchUserById(id));
-	}
-
-	@Override
-	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto) {
-		log.info("Updating the user with the id = " + id);
+	public UserResponseDTO updateUser(Long id, UserRequestDTO userDTO) {
+		log.info("Updating user with the id = " + id);
 		User user = fetchUserById(id);
-		User updatedUser = getUserMapper().mapToEntity(userDto);
+		User updatedUser = buildUser(userDTO);
 		updatedUser.setId(id);
-		updatedUser.addRole(getRoleRepository().findById(userDto.getRoleId()).get());
-		updatedUser.setPassword(getPasswordEncoder().encode(userDto.getPassword()));
-		updatedUser.setCreatedAt(user.getCreatedAt());
 		updatedUser = getUserRepository().save(updatedUser);
+		log.info("User successfully updated.");
 		return getUserMapper().mapToDTO(updatedUser);
 
 	}
 
-	@Override
 	public boolean deleteUser(Long id) {
-		log.info("Deleting the user with the id " + id);
+		log.info("Deleting the user with the id =" + id);
 		getUserRepository().deleteById(id);
+		log.info("User successfully deleted.");
 		return true;
 
 	}

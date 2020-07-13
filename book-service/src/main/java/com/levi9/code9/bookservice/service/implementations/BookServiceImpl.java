@@ -46,15 +46,14 @@ public class BookServiceImpl implements BookService {
 	private BookMapper _bookMapper;
 
 	@Override
-	public BookResponseDTO createBook(BookRequestDTO bookDTO) {
-		log.info("Adding a new book...");
+	public Book buildBook(BookRequestDTO bookDTO) {
+		log.info("Adapting the book...");
 		Book book = getBookMapper().mapToEntity(bookDTO);
 		Set<Genre> genres = new HashSet<>();
 		List<BookAuthorEntity> authors = new ArrayList<>();
 		bookDTO.getGenresIds().forEach(genreId -> {
 			genres.add(getGenreService().fetchGenreById(genreId));
 		});
-
 		book.setGenres(genres);
 		for (Long authorId : bookDTO.getAuthorsIds()) {
 			BookAuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId)
@@ -63,7 +62,13 @@ public class BookServiceImpl implements BookService {
 		}
 
 		book.setAuthors(authors);
-		book = getBookRepository().save(book);
+		return book;
+	}
+
+	@Override
+	public BookResponseDTO createBook(BookRequestDTO bookDTO) {
+		log.info("Adding a new book...");
+		Book book = getBookRepository().save(buildBook(bookDTO));
 		log.info("Book successfully added.");
 		return getBookMapper().mapToDTO(book);
 	}
@@ -96,13 +101,8 @@ public class BookServiceImpl implements BookService {
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
 		Book book = fetchBookById(id);
 		log.info("Updating the book with the id " + id);
-		book = getBookMapper().mapToEntity(bookDTO);
+		book = buildBook(bookDTO);
 		book.setId(id);
-		Set<Genre> genres = new HashSet<>();
-		bookDTO.getGenresIds().forEach(genreId -> {
-			genres.add(getGenreService().fetchGenreById(genreId));
-		});
-		book.setGenres(genres);
 		book = getBookRepository().save(book);
 		log.info("Book successfully updated.");
 		return getBookMapper().mapToDTO(book);

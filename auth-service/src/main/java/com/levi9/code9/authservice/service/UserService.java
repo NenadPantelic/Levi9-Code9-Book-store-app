@@ -7,8 +7,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.levi9.code9.authservice.dto.request.UserRequestDTO;
 import com.levi9.code9.authservice.dto.response.UserResponseDTO;
+import com.levi9.code9.authservice.model.User;
 
 public interface UserService {
+	public User buildUser(UserRequestDTO userDTO);
+
 	public UserResponseDTO createUser(UserRequestDTO signupDto);
 
 	public List<UserResponseDTO> getAllUsers();
@@ -18,4 +21,5 @@ public interface UserService {
 	public UserResponseDTO updateUser(Long id, UserRequestDTO userDto);
 
 	public boolean deleteUser(Long id);
+
 }

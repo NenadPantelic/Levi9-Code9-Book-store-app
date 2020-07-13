@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FeignErrorDecoder implements ErrorDecoder {
 
+	private static final String ERROR_MESSAGE = "An error occured in the auth client microservice. Original response: ";
+
 	@Override
 	public Exception decode(String methodKey, Response response) {
 		log.info("An error occured in client microservice");
@@ -30,8 +32,8 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
 		}
 
-		return new ClientMicroserviceException("An error occured in the auth client microservice. Original response: "
-				+ Utils.parseResponseToString(originalResponseMessage).toString());
+		return new ClientMicroserviceException(
+				ERROR_MESSAGE + Utils.parseResponseToString(originalResponseMessage).toString());
 	}
 
 }
