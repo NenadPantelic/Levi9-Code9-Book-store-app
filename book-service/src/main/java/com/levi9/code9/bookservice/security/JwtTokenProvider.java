@@ -99,7 +99,7 @@ public class JwtTokenProvider {
 	public String resolveToken(HttpServletRequest req) {
 		String bearerToken = req.getHeader(getJwtHeader());
 		if (bearerToken != null && bearerToken.startsWith(getHeaderPrefix())) {
-			jwtToken = bearerToken;
+			//jwtToken = bearerToken;
 			return bearerToken.substring(7, bearerToken.length());
 		}
 		return null;
@@ -109,8 +109,11 @@ public class JwtTokenProvider {
 		String username = getUsername(token);
 		List<GrantedAuthority> authorities = getAuthorities(token);
 		Long userId = getUserId(token);
+		jwtToken = token;
+		System.out.println("DEBUGGGGG");
+		System.out.println(jwtToken);
 		if (USER_CONTEXT.get() == null) {
-			USER_CONTEXT.set(new UserContext(userId, username, authorities));
+			USER_CONTEXT.set(new UserContext(userId, username, token, authorities));
 		}
 	}
 

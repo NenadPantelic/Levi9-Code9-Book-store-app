@@ -31,7 +31,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 
 	@Autowired
 	private JwtTokenProvider _tokenProvider;
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
@@ -42,10 +42,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {// GenericFilterBean {
 				log.info("Authenticating user....");
 				SecurityContextHolder.getContext().setAuthentication(auth);
 				getTokenProvider().setUserContext(token);
-				
+
 			}
 		}
-		System.out.println("TOKEN VALUE " + JwtTokenProvider.jwtToken);
 		chain.doFilter(request, response);
 	}
 

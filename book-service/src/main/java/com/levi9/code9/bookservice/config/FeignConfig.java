@@ -16,11 +16,12 @@ public class FeignConfig {
 
 	@Bean
 	public RequestInterceptor requestInterceptor() {
-		//System.out.println(JwtTokenProvider.jwtToken);
+		System.out.println("DEBUG");
+		System.out.println(JwtTokenProvider.jwtToken);
 		return requestTemplate -> {
 			requestTemplate.header("Content-Type", "application/json");
 			requestTemplate.header("Accept", "application/json");
-			requestTemplate.header("Authorization", JwtTokenProvider.jwtToken);
+			requestTemplate.header("Authorization", JWT_PREFIX + JwtTokenProvider.USER_CONTEXT.get().getToken());//JwtTokenProvider.jwtToken);
 
 		};
 	}

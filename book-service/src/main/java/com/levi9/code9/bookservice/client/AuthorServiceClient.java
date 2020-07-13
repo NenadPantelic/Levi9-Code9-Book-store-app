@@ -32,7 +32,5 @@ public interface AuthorServiceClient {
 	@PutMapping(value = "book-authors/")
 	public void replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
 	
-	@GetMapping(value="/api/v1/authors/test")
-	public boolean test(@RequestHeader(value = "Authorization", required = true) String authorizationHeader);
 
 }

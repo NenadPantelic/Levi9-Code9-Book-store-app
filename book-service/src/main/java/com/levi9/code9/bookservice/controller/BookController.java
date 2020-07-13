@@ -44,9 +44,7 @@ public class BookController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
 	public BookResponseDTO createBook(@Valid @RequestBody BookRequestDTO bookDTO) {
-		BookResponseDTO response =  getBookService().createBook(bookDTO);
-		boolean b = getAuthorService().test(JwtTokenProvider.jwtToken);
-		 
+		BookResponseDTO response =  getBookService().createBook(bookDTO);		 
 		getAuthorService().addBookAuthors(new BookAuthorsRequestDTO(response.getId(), bookDTO.getAuthorsIds()));//, JwtTokenProvider.jwtToken);
 		List<AuthorResponseDTO> authors = getAuthorService().getBookAuthors(response.getId());//, JwtTokenProvider.jwtToken);
 		//(response.getId(), JwtTokenProvider.jwtToken);
