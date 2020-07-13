@@ -61,7 +61,7 @@ public class Author {
 	@JoinTable(name = "author_book", joinColumns = { @JoinColumn(name = "author_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "book_id") })
 	@Builder.Default
-	private Set<BookEntity> _authors = new HashSet<BookEntity>();
+	private Set<BookEntity> _books = new HashSet<BookEntity>();
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
@@ -76,6 +76,14 @@ public class Author {
 	private Date _updatedAt = new Date();
 
 	public void addBook(BookEntity book) {
-		getAuthors().add(book);
+		getBooks().add(book);
 	}
+
+	public void removeBook(BookEntity book) {
+		if (getBooks().contains(book)) {
+			getBooks().remove(book);
+		}
+
+	}
+
 }

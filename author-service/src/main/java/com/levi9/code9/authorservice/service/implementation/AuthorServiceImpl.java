@@ -98,8 +98,9 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void addAuthorToBook(Author author, Long bookId) {
-		log.info("Adding author with an id = " + author.getId() + " to book with an id = " + bookId);
+	public void addAuthorToBook(Long authorId, Long bookId) {
+		log.info("Adding author with an id = " + authorId + " to book with an id = " + bookId);
+		Author author = fetchAuthorById(authorId);
 		BookEntity book = getBookRepository().findById(bookId).orElse(new BookEntity(bookId));
 		author.addBook(book);
 		getAuthorRepository().save(author);
@@ -107,12 +108,48 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void addAuthorsToBook(Long bookId, List<Long> authorsIds) {
+	public void addAuthorsToBook(List<Long> authorsIds, Long bookId) {
 		for (Long authorId : authorsIds) {
-			Author author = fetchAuthorById(authorId);
-			addAuthorToBook(author, bookId);
+			addAuthorToBook(authorId, bookId);
 		}
 
+	}
+
+	@Override
+	public void removeBookAuthor(Long authorId, Long bookId) {
+		BookEntity book = getBookRepository().findById(bookId).orElseThrow(
+				() -> new ResourceNotFoundException("Book with the given id = " + bookId + " doesn't exist."));
+		Author author = fetchAuthorById(authorId);
+		author.removeBook(book);
+		getAuthorRepository().save(author);
+
+	}
+
+	@Override
+	public void removeBookAuthors(List<Long> authorsIds, Long bookId) {
+		for (Long authorId : authorsIds) {
+			removeBookAuthor(authorId, bookId);
+		}
+
+	}
+
+	@Override
+	public void replaceBookAuthors(List<Long> authorsIds, Long bookId) {
+		BookEntity book = getBookRepository().findById(bookId).orElseThrow(
+				() -> new ResourceNotFoundException("Book with the given id = " + bookId + " doesn't exist."));
+		List<Long> currentAuthors = getAuthorRepository().findAuthorsIdsByBook(bookId);
+		// remove authors that are not present anymore
+		for (Long authorId : currentAuthors) {
+			if (!authorsIds.contains(authorId)) {
+				removeBookAuthor(authorId, bookId);
+			}
+		}
+		// add new authors
+		for (Long authorId : authorsIds) {
+			if (!currentAuthors.contains(authorId)) {
+				addAuthorToBook(authorId, bookId);
+			}
+		}
 	}
 
 }

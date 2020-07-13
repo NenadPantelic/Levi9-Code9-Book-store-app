@@ -24,8 +24,14 @@ public interface AuthorService {
 
 	public List<AuthorResponseDTO> getAuthorsByIds(List<Long> ids);
 
-	public void addAuthorToBook(Author author, Long bookId);
+	public void addAuthorToBook(Long authorId, Long bookId);
 
-	public void addAuthorsToBook(Long bookId, List<Long> authorsIds);
+	public void addAuthorsToBook(List<Long> authorsIds, Long bookId);
+
+	public void removeBookAuthor(Long authorId, Long bookId);
+
+	public void removeBookAuthors(List<Long> authorsIds, Long bookId);
+
+	public void replaceBookAuthors(List<Long> authorsIds, Long bookId);
 
 }

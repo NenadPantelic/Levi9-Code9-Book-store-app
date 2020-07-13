@@ -64,7 +64,19 @@ public class AuthorController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(value = "book-authors/")
 	public void addAuthorsToBook(@RequestBody BookAuthorsRequestDTO bookAuthors) {
-		getAuthorService().addAuthorsToBook(bookAuthors.getBookId(), bookAuthors.getAuthorsIds());
+		getAuthorService().addAuthorsToBook(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "book-authors/")
+	public void removeBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		getAuthorService().removeBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PutMapping(value = "book-authors/")
+	public void replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		getAuthorService().replaceBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
 	}
 
 }

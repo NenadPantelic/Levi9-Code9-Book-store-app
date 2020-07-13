@@ -19,5 +19,5 @@ import lombok.experimental.Accessors;
 public class BookEntity {
 	@Id
 	@Column(name = "book_id", nullable = false)
-	private Long _bookId;
+	private Long _id;
 }
