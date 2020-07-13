@@ -12,7 +12,9 @@ import com.levi9.code9.authorservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.authorservice.exception.ResourceNotFoundException;
 import com.levi9.code9.authorservice.mapper.AuthorMapper;
 import com.levi9.code9.authorservice.model.Author;
+import com.levi9.code9.authorservice.model.BookEntity;
 import com.levi9.code9.authorservice.repository.AuthorRepository;
+import com.levi9.code9.authorservice.repository.BookRepository;
 import com.levi9.code9.authorservice.service.AuthorService;
 
 import lombok.Getter;
@@ -28,6 +30,9 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Autowired
 	private AuthorRepository _authorRepository;
+
+	@Autowired
+	BookRepository _bookRepository;
 
 	@Autowired
 	private AuthorMapper _authorMapper;
@@ -90,6 +95,24 @@ public class AuthorServiceImpl implements AuthorService {
 	public List<AuthorResponseDTO> getAuthorsByIds(List<Long> ids) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addAuthorToBook(Author author, Long bookId) {
+		log.info("Adding author with an id = " + author.getId() + " to book with an id = " + bookId);
+		BookEntity book = getBookRepository().findById(bookId).orElse(new BookEntity(bookId));
+		author.addBook(book);
+		getAuthorRepository().save(author);
+
+	}
+
+	@Override
+	public void addAuthorsToBook(Long bookId, List<Long> authorsIds) {
+		for (Long authorId : authorsIds) {
+			Author author = fetchAuthorById(authorId);
+			addAuthorToBook(author, bookId);
+		}
+
 	}
 
 }

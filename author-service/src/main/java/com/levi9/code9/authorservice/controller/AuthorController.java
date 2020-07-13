@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.authorservice.dto.request.AuthorRequestDTO;
+import com.levi9.code9.authorservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.authorservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.authorservice.service.AuthorService;
 
@@ -58,6 +59,12 @@ public class AuthorController {
 	@DeleteMapping(value = "{id}")
 	public boolean deleteGenre(@PathVariable("id") Long id) {
 		return getAuthorService().deleteAuthor(id);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PostMapping(value = "book-authors/")
+	public void addAuthorsToBook(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		getAuthorService().addAuthorsToBook(bookAuthors.getBookId(), bookAuthors.getAuthorsIds());
 	}
 
 }

@@ -46,7 +46,7 @@ public class Author {
 	@NotBlank(message = "Author's first name must be provided.")
 	@Size(max = 255, message = "Length of the author's last name must be between 1 and 255.")
 	@Column(name = "first_name", nullable = false)
-	private String _firsName;
+	private String _firstName;
 
 	@NotBlank(message = "Author's last name must be provided.")
 	@Size(max = 255, message = "Length of the author's last name must be between 1 and 255.")
@@ -74,4 +74,8 @@ public class Author {
 	@Column(name = "updated_at")
 	@Builder.Default
 	private Date _updatedAt = new Date();
+
+	public void addBook(BookEntity book) {
+		getAuthors().add(book);
+	}
 }

@@ -14,7 +14,6 @@ import com.levi9.code9.bookservice.model.Book;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
-	//@Mapping(target = "authorsIds", expression = "java(book.getAuthorsIds())")
 	BookResponseDTO mapToDTO(Book book);
 
 	List<BookResponseDTO> mapToDTOList(Iterable<Book> books);
