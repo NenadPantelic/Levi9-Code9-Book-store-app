@@ -1,4 +1,4 @@
-package com.levi9.code9.authorservice.exception;
+package com.levi9.code9.authorservice.utils;
 
 public class ExceptionUtils {
 	// helper

@@ -101,9 +101,9 @@ public class BookServiceImpl implements BookService {
 		log.info("Fetching books by genre = " + genreName + ".");
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenreName(genreName));
 	}
-	
+
 	@Override
-	public List<BookResponseDTO> getBooksByTitle(String title){
+	public List<BookResponseDTO> getBooksByTitle(String title) {
 		log.info("Fetching books by title = " + title + ".");
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByTitle(title));
 
@@ -121,11 +121,10 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public boolean deleteBook(Long id) {
+	public void deleteBook(Long id) {
 		log.info("Deleting the book with an id = " + id);
 		getBookRepository().softDelete(id);
 		log.info("Book successfully deleted.");
-		return true;
 	}
 
 	@Override
@@ -142,12 +141,26 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	public void deleteBookAuthors(Long authorId) {
+		List<Book> booksByTargetAuthor = getBookRepository().findBooksByAuthorId(authorId);
+		AuthorEntity author = getBookAuthorRepository().findById(authorId).orElseThrow(
+				() -> new ResourceNotFoundException("The author with the id = " + authorId + " doesn't exist."));
+		booksByTargetAuthor.forEach(book -> {
+			book.removeAuthor(author);
+			getBookRepository().save(book);
+		});
+		getBookAuthorRepository().deleteById(authorId);
+
+	}
+
+	@Override
 	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData,
 			List<BookAuthorResponseDTO> booksAuthors) {
 		Map<Long, Object> map = booksAuthors.stream()
 				.collect(Collectors.toMap(BookAuthorResponseDTO::getBookId, item -> item.getAuthors()));
 		List<BookWithAuthorResponseDTO> bookAuthorData = new ArrayList<BookWithAuthorResponseDTO>();
 		for (BookResponseDTO bookRespDTO : booksData) {
+			@SuppressWarnings("unchecked")
 			List<AuthorResponseDTO> authors = (List<AuthorResponseDTO>) map.get(bookRespDTO.getId());
 			bookAuthorData.add(new BookWithAuthorResponseDTO(bookRespDTO, authors));
 		}

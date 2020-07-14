@@ -23,7 +23,7 @@ public interface AuthServiceClient {
 	public UserResponseDTO updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO userDto);
 
 	@DeleteMapping(value = "{id}")
-	public boolean deleteUser(@PathVariable("id") Long id);
+	public void deleteUser(@PathVariable("id") Long id);
 	
 
 }

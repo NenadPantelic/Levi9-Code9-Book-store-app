@@ -94,11 +94,10 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	public boolean deleteUser(Long id) {
+	public void deleteUser(Long id) {
 		log.info("Deleting the user with the id =" + id);
 		getUserRepository().deleteById(id);
 		log.info("User successfully deleted.");
-		return true;
 
 	}
 

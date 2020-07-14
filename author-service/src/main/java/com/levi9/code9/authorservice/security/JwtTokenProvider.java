@@ -48,7 +48,6 @@ public class JwtTokenProvider {
 	private String _headerPrefix;
 
 	public static final ThreadLocal<UserContext> USER_CONTEXT = new ThreadLocal<UserContext>();
-	public static String jwtToken = null;
 
 	@PostConstruct
 	protected void init() {
@@ -108,7 +107,6 @@ public class JwtTokenProvider {
 		String username = getUsername(token);
 		List<GrantedAuthority> authorities = getAuthorities(token);
 		Long userId = getUserId(token);
-		jwtToken = token;
 		if (USER_CONTEXT.get() == null) {
 			USER_CONTEXT.set(new UserContext(userId, username, token, authorities));
 		}

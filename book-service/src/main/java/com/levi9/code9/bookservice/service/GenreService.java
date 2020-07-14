@@ -12,7 +12,7 @@ public interface GenreService {
 	public List<GenreResponseDTO> getAllGenres();
 	public GenreResponseDTO getGenreById(Long id);
 	public GenreResponseDTO updateGenre(Long id, GenreRequestDTO genreDTO);
-	public boolean deleteGenre(Long id);
+	public void deleteGenre(Long id);
 	public Genre fetchGenreById(Long id);
 
 	

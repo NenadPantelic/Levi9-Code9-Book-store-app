@@ -1,12 +1,11 @@
-package com.levi9.code9.bookservice.client;
+package com.levi9.code9.authorservice.client;
 
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.stereotype.Component;
 
-import com.levi9.code9.bookservice.exception.ClientMicroserviceException;
-import com.levi9.code9.bookservice.utils.Utils;
+import com.levi9.code9.authorservice.exception.ClientMicroserviceException;
+import com.levi9.code9.authorservice.utils.Utils;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;

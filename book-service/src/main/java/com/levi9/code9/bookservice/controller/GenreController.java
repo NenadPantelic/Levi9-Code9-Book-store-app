@@ -57,8 +57,8 @@ public class GenreController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
-	public boolean deleteGenre(@PathVariable("id") Long id) {
-		return getGenreService().deleteGenre(id);
+	public void deleteGenre(@PathVariable("id") Long id) {
+		getGenreService().deleteGenre(id);
 	}
 
 }

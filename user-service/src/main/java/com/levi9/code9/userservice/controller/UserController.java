@@ -42,6 +42,7 @@ public class UserController {
 	@PostMapping(value = "")
 	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
 		UserResponseDTO newUser = getUserService().createUser(signupDto);
+		log.info("Adding user to auth microservice");
 		getAuthServiceClient().createUser(signupDto);
 		log.info("User successfully registered in auth microservice!");
 		return newUser;
@@ -62,19 +63,20 @@ public class UserController {
 
 	@PutMapping(value = "{id}")
 	public UserResponseDTO updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userDto) {
-		log.info("User successfully updated in auth microservice!");
 		UserResponseDTO updatedUser = getUserService().updateUser(id, userDto);
+		log.info("Updating user in auth microservice");
 		getAuthServiceClient().updateUser(id, userDto);
+		log.info("User successfully updated in auth microservice!");
 		return updatedUser;
 
 	}
 
 	@DeleteMapping(value = "{id}")
-	public boolean deleteUser(@PathVariable("id") Long id) {
-		boolean result = getUserService().deleteUser(id);
+	public void deleteUser(@PathVariable("id") Long id) {
+		getUserService().deleteUser(id);
+		log.info("Request user removal from auth microservice");
 		getAuthServiceClient().deleteUser(id);
 		log.info("User successfully removed from auth microservice!");
-		return result;
 
 	}
 

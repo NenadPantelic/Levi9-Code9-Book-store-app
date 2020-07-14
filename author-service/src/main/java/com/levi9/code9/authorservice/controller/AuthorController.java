@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.levi9.code9.authorservice.client.BookServiceClient;
 import com.levi9.code9.authorservice.dto.request.AuthorRequestDTO;
 import com.levi9.code9.authorservice.dto.request.BookAuthorListRequestDTO;
 import com.levi9.code9.authorservice.dto.request.BookAuthorsRequestDTO;
@@ -25,15 +26,20 @@ import com.levi9.code9.authorservice.service.AuthorService;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
 @Accessors(prefix = "_")
 @Data
 @RestController
+@Slf4j
 @RequestMapping(value = "/api/v1/authors/")
 public class AuthorController {
 
 	@Autowired
 	private AuthorService _authorService;
+	
+	@Autowired
+	private BookServiceClient _bookServiceClient; 
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
@@ -64,8 +70,12 @@ public class AuthorController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
-	public boolean deleteAuthor(@PathVariable("id") Long id) {
-		return getAuthorService().deleteAuthor(id);
+	public void deleteAuthor(@PathVariable("id") Long id) {
+		getAuthorService().deleteAuthor(id);
+		log.info("Request author removal from book microservice....");
+		getBookServiceClient().deleteBookAuthors(id);
+		log.info("Author successfully removed from book microservice");
+
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

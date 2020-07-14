@@ -19,7 +19,7 @@ public interface AuthorService {
 
 	public AuthorResponseDTO updateAuthor(Long id, AuthorRequestDTO authorDTO);
 
-	public boolean deleteAuthor(Long id);
+	public void deleteAuthor(Long id);
 
 	public Author fetchAuthorById(Long id);
 

@@ -78,11 +78,10 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public boolean deleteAuthor(Long id) {
+	public void deleteAuthor(Long id) {
 		log.info("Deleting the author with the id " + id);
 		getAuthorRepository().deleteById(id);
 		log.info("Author successfully deleted.");
-		return true;
 	}
 
 	@Override
@@ -144,13 +143,14 @@ public class AuthorServiceImpl implements AuthorService {
 
 	}
 
+	// use when book is deleted
 	@Override
 	public void removeAllBookAuthors(Long bookId) {
 		List<Long> authorsIds = getAuthorRepository().findAuthorsIdsByBook(bookId);
 		for (Long authorId : authorsIds) {
 			removeBookAuthor(authorId, bookId);
 		}
-
+		getBookRepository().deleteById(bookId);
 	}
 
 	@Override

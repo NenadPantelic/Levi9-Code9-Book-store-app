@@ -1,9 +1,6 @@
 package com.levi9.code9.bookservice.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -42,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BookController {
 
 	@Autowired
-	private AuthorServiceClient _authorService;
+	private AuthorServiceClient _authorServiceClient;
 
 	@Autowired
 	private BookService _bookService;
@@ -51,8 +48,8 @@ public class BookController {
 	@PostMapping
 	public BookWithAuthorResponseDTO createBook(@Valid @RequestBody BookRequestDTO bookDTO) {
 		BookResponseDTO bookRespDTO = getBookService().createBook(bookDTO);
-		log.info("Fetching authors data...");
-		List<AuthorResponseDTO> authors = getAuthorService()
+		log.info("Fetching authors from author microservice...");
+		List<AuthorResponseDTO> authors = getAuthorServiceClient()
 				.addBookAuthors(new BookAuthorsRequestDTO(bookRespDTO.getId(), bookDTO.getAuthorsIds()));
 
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
@@ -61,8 +58,8 @@ public class BookController {
 	@GetMapping(value = "{id}")
 	public BookWithAuthorResponseDTO getBook(@PathVariable("id") Long id) {
 		BookResponseDTO bookRespDTO = getBookService().getBookById(id);
-		log.info("Fetching authors data...");
-		List<AuthorResponseDTO> authors = getAuthorService().getBookAuthors(bookRespDTO.getId());
+		log.info("Fetching authors from author microservice...");
+		List<AuthorResponseDTO> authors = getAuthorServiceClient().getBookAuthors(bookRespDTO.getId());
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
 
 	}
@@ -70,66 +67,61 @@ public class BookController {
 	@GetMapping
 	public List<BookWithAuthorResponseDTO> getBooks() {
 		List<BookResponseDTO> booksData = getBookService().getAllBooks();
-		BookAuthorListRequestDTO listOfBooks = new BookAuthorListRequestDTO(
-				booksData.stream().map(book -> book.getId()).collect(Collectors.toList()));
-		log.info("Fetching authors data...");
-		List<BookAuthorResponseDTO> booksAuthors = getAuthorService().getBooksAuthors(listOfBooks);
-		return getBookService().fillBooksDataWithAuthorsData(booksData, booksAuthors);
-
+		return getMergedBookAndAuthorDTOLists(booksData);
 	}
 
 	@GetMapping(value = "", params = "genreId")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenre(genreId);
-		BookAuthorListRequestDTO listOfBooks = new BookAuthorListRequestDTO(
-				booksData.stream().map(book -> book.getId()).collect(Collectors.toList()));
-		log.info("Fetching authors data...");
-		List<BookAuthorResponseDTO> booksAuthors = getAuthorService().getBooksAuthors(listOfBooks);
-		return getBookService().fillBooksDataWithAuthorsData(booksData, booksAuthors);
+		return getMergedBookAndAuthorDTOLists(booksData);
 	}
 
 	@GetMapping(value = "", params = "genre")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genre") String genreName) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenreName(genreName);
-		BookAuthorListRequestDTO listOfBooks = new BookAuthorListRequestDTO(
-				booksData.stream().map(book -> book.getId()).collect(Collectors.toList()));
-		log.info("Fetching authors data...");
-		List<BookAuthorResponseDTO> booksAuthors = getAuthorService().getBooksAuthors(listOfBooks);
-		return getBookService().fillBooksDataWithAuthorsData(booksData, booksAuthors);
+		return getMergedBookAndAuthorDTOLists(booksData);
+
 	}
-	
-	
+
 	@GetMapping(value = "", params = "title")
 	public List<BookWithAuthorResponseDTO> getBooksByTitle(@RequestParam("title") String title) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByTitle(title);
+		return getMergedBookAndAuthorDTOLists(booksData);
+
+	}
+
+	// utility method
+	private List<BookWithAuthorResponseDTO> getMergedBookAndAuthorDTOLists(List<BookResponseDTO> booksData) {
 		BookAuthorListRequestDTO listOfBooks = new BookAuthorListRequestDTO(
 				booksData.stream().map(book -> book.getId()).collect(Collectors.toList()));
-		log.info("Fetching authors data...");
-		List<BookAuthorResponseDTO> booksAuthors = getAuthorService().getBooksAuthors(listOfBooks);
+		log.info("Fetching authors from author microservice...");
+		List<BookAuthorResponseDTO> booksAuthors = getAuthorServiceClient().getBooksAuthors(listOfBooks);
 		return getBookService().fillBooksDataWithAuthorsData(booksData, booksAuthors);
 	}
 
-	
-	
-	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
 	public BookWithAuthorResponseDTO updateBook(@PathVariable("id") Long id,
 			@Valid @RequestBody BookRequestDTO bookDTO) {
 		BookResponseDTO bookRespDTO = getBookService().updateBook(id, bookDTO);
 		log.info("Updating book authors...");
-		List<AuthorResponseDTO> authors = getAuthorService()
+		List<AuthorResponseDTO> authors = getAuthorServiceClient()
 				.replaceBookAuthors(new BookAuthorsRequestDTO(bookRespDTO.getId(), bookDTO.getAuthorsIds()));
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
-	public boolean deleteBook(@PathVariable("id") Long id) {
-		boolean result = getBookService().deleteBook(id);
+	public void deleteBook(@PathVariable("id") Long id) {
+		getBookService().deleteBook(id);
+		log.info("Request books removal from book microservice....");
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "", params = "authorId")
+	public void deleteBookAuthors(@RequestParam("authorId") Long authorId) {
 		log.info("Removing authors data...");
-		getAuthorService().removeBookAuthors(id);
-		return result;
+		getBookService().deleteBookAuthors(authorId);
 	}
 
 }

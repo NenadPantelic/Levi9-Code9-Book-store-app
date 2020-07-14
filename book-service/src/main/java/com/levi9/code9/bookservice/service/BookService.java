@@ -11,17 +11,30 @@ import com.levi9.code9.bookservice.model.Book;
 public interface BookService {
 
 	public Book buildBook(BookRequestDTO bookDTO);
-	public BookResponseDTO createBook(BookRequestDTO bookDTO);
-	public List<BookResponseDTO> getAllBooks();
-	public BookResponseDTO getBookById(Long id);
-	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO);
-	public boolean deleteBook(Long id);
-	public Book fetchBookById(Long id);
-	public List<BookResponseDTO> getBooksByIds(List<Long> ids);
-	public List<BookResponseDTO> getBooksByGenre(Long genreId);
-	public List<BookResponseDTO> getBooksByGenreName(String genreName);
-	public List<BookResponseDTO> getBooksByTitle(String title);
-	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData, List<BookAuthorResponseDTO> booksAuthors);
 
+	public BookResponseDTO createBook(BookRequestDTO bookDTO);
+
+	public List<BookResponseDTO> getAllBooks();
+
+	public BookResponseDTO getBookById(Long id);
+
+	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO);
+
+	public void deleteBook(Long id);
+
+	public Book fetchBookById(Long id);
+
+	public List<BookResponseDTO> getBooksByIds(List<Long> ids);
+
+	public List<BookResponseDTO> getBooksByGenre(Long genreId);
+
+	public List<BookResponseDTO> getBooksByGenreName(String genreName);
+
+	public List<BookResponseDTO> getBooksByTitle(String title);
+	
+	public void deleteBookAuthors(Long authorId);
+
+	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData,
+			List<BookAuthorResponseDTO> booksAuthors);
 
 }

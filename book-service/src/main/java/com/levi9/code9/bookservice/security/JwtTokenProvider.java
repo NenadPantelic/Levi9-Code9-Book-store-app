@@ -48,7 +48,6 @@ public class JwtTokenProvider {
 	private String _headerPrefix;
 
 	public static final ThreadLocal<UserContext> USER_CONTEXT = new ThreadLocal<UserContext>();
-	public static String jwtToken = null;
 
 	@PostConstruct
 	protected void init() {
@@ -99,7 +98,6 @@ public class JwtTokenProvider {
 	public String resolveToken(HttpServletRequest req) {
 		String bearerToken = req.getHeader(getJwtHeader());
 		if (bearerToken != null && bearerToken.startsWith(getHeaderPrefix())) {
-			//jwtToken = bearerToken;
 			return bearerToken.substring(7, bearerToken.length());
 		}
 		return null;
@@ -109,7 +107,7 @@ public class JwtTokenProvider {
 		String username = getUsername(token);
 		List<GrantedAuthority> authorities = getAuthorities(token);
 		Long userId = getUserId(token);
-		//jwtToken = token;
+		// jwtToken = token;
 		if (USER_CONTEXT.get() == null) {
 			USER_CONTEXT.set(new UserContext(userId, username, token, authorities));
 		}

@@ -118,6 +118,13 @@ public class Book {
 		return getAuthors().stream().map(val -> val.getId()).collect(Collectors.toList());
 	}
 
+	public void removeAuthor(AuthorEntity author) {
+		if (getAuthors().contains(author)) {
+			getAuthors().remove(author);
+		}
+
+	}
+
 	@PreRemove
 	private void preRemove() {
 		_isActive = false;
