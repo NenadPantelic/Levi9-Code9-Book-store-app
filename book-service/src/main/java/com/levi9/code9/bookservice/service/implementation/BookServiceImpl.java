@@ -3,15 +3,21 @@ package com.levi9.code9.bookservice.service.implementation;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
+import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
+import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
+import com.levi9.code9.bookservice.dto.response.BookWithAuthorResponseDTO;
 import com.levi9.code9.bookservice.exception.ResourceNotFoundException;
 import com.levi9.code9.bookservice.mapper.BookMapper;
 import com.levi9.code9.bookservice.model.Book;
@@ -56,8 +62,7 @@ public class BookServiceImpl implements BookService {
 		});
 		book.setGenres(genres);
 		for (Long authorId : bookDTO.getAuthorsIds()) {
-			AuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId)
-					.orElse(new AuthorEntity(authorId));
+			AuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId).orElse(new AuthorEntity(authorId));
 			authors.add(bookAuthor);
 		}
 
@@ -93,8 +98,15 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public List<BookResponseDTO> getBooksByGenreName(String genreName) {
-		log.info("Fetcing books by genre = " + genreName + ".");
+		log.info("Fetching books by genre = " + genreName + ".");
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByGenreName(genreName));
+	}
+	
+	@Override
+	public List<BookResponseDTO> getBooksByTitle(String title){
+		log.info("Fetching books by title = " + title + ".");
+		return getBookMapper().mapToDTOList(getBookRepository().findBooksByTitle(title));
+
 	}
 
 	@Override
@@ -127,6 +139,19 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public List<BookResponseDTO> getBooksByIds(List<Long> ids) {
 		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
+	}
+
+	@Override
+	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData,
+			List<BookAuthorResponseDTO> booksAuthors) {
+		Map<Long, Object> map = booksAuthors.stream()
+				.collect(Collectors.toMap(BookAuthorResponseDTO::getBookId, item -> item.getAuthors()));
+		List<BookWithAuthorResponseDTO> bookAuthorData = new ArrayList<BookWithAuthorResponseDTO>();
+		for (BookResponseDTO bookRespDTO : booksData) {
+			List<AuthorResponseDTO> authors = (List<AuthorResponseDTO>) map.get(bookRespDTO.getId());
+			bookAuthorData.add(new BookWithAuthorResponseDTO(bookRespDTO, authors));
+		}
+		return bookAuthorData;
 	}
 
 }

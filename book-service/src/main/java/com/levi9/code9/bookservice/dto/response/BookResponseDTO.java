@@ -20,5 +20,5 @@ public class BookResponseDTO {
 	private List<GenreResponseDTO> _genres;
 	//private List<Long> _authorsIds;
 	private Integer _quantity;
-	private List<AuthorResponseDTO> _authors;
+	//private List<AuthorResponseDTO> _authors;
 }

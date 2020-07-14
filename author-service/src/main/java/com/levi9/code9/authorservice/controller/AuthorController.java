@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.authorservice.dto.request.AuthorRequestDTO;
+import com.levi9.code9.authorservice.dto.request.BookAuthorListRequestDTO;
 import com.levi9.code9.authorservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.authorservice.dto.response.AuthorResponseDTO;
+import com.levi9.code9.authorservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.authorservice.service.AuthorService;
 
 import lombok.Data;
@@ -49,6 +51,11 @@ public class AuthorController {
 		return getAuthorService().getAuthorById(id);
 	}
 
+	
+	@PostMapping(value = "/book-authors/list")
+	public List<BookAuthorResponseDTO> getBooksAuthors(@RequestBody BookAuthorListRequestDTO booksIds) {
+		return getAuthorService().getBooksAndAuthors(booksIds.getBooksIds());
+	}
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
 	public AuthorResponseDTO updateAuthor(@PathVariable("id") Long id, @Valid @RequestBody AuthorRequestDTO AuthorDTO) {
@@ -57,18 +64,18 @@ public class AuthorController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
-	public boolean deleteGenre(@PathVariable("id") Long id) {
+	public boolean deleteAuthor(@PathVariable("id") Long id) {
 		return getAuthorService().deleteAuthor(id);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping(value = "book-authors/")
-	public void addBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
-		getAuthorService().addBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	public List<AuthorResponseDTO> addBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		return  getAuthorService().addBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
 	}
 
 	@GetMapping(value = "book-authors/", params = "bookId")
-	public List<AuthorResponseDTO> getBookAuthorsT(@RequestParam Long bookId) {
+	public List<AuthorResponseDTO> getBookAuthors(@RequestParam Long bookId) {
 		return getAuthorService().getBookAuthors(bookId);
 	}
 
@@ -77,11 +84,17 @@ public class AuthorController {
 	public void removeBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
 		getAuthorService().removeBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
 	}
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "book-authors/", params="bookId")
+	public void removeBookAuthors(@RequestParam("bookId") Long bookId) {
+		getAuthorService().removeAllBookAuthors(bookId);
+	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "book-authors/")
-	public void replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
-		getAuthorService().replaceBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
+	public List<AuthorResponseDTO> replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors) {
+		return getAuthorService().replaceBookAuthors(bookAuthors.getAuthorsIds(), bookAuthors.getBookId());
 	}
 
 }

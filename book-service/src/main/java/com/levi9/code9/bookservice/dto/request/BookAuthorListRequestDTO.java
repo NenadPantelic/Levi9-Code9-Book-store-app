@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.dto.response;
+package com.levi9.code9.bookservice.dto.request;
 
 import java.util.List;
 
@@ -7,12 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-@Accessors(prefix = "_")
+@Accessors(prefix="_")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookAuthorResponseDTO {
+public class BookAuthorListRequestDTO {
 
-	private Long _bookId;
-	private List<AuthorResponseDTO> _authors;
+	private List<Long> _booksIds;
 }

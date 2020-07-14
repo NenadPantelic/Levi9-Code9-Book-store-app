@@ -8,29 +8,34 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.levi9.code9.bookservice.config.FeignConfig;
+import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
+import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
 
-@FeignClient(name = "author-service" , configuration = { FeignConfig.class })
+@FeignClient(name = "author-service", configuration = { FeignConfig.class })
 //@RequestMapping(value = "/api/v1/authors/")
 public interface AuthorServiceClient {
 
 	@PostMapping(value = "/api/v1/authors/book-authors/")
-	public void addBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);// @RequestHeader(value = "Authorization", required = true) String authorizationHeader);
+	public List<AuthorResponseDTO> addBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
 
-	@GetMapping(value = "/api/v1/authors/book-authors/", params = "bookId")
+	@PostMapping(value = "/api/v1/authors/book-authors/", params = "bookId")
 	public List<AuthorResponseDTO> getBookAuthors(@RequestParam Long bookId);
-			//@RequestHeader(value = "Authorization", required = true) String authorizationHeader);
 
-	@DeleteMapping(value = "book-authors/")
+	@GetMapping(value = "/api/v1/authors/book-authors/list")
+	public List<BookAuthorResponseDTO> getBooksAuthors(@RequestBody BookAuthorListRequestDTO booksIds);
+
+	@DeleteMapping(value = "/api/v1/authors/book-authors/")
 	public void removeBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
 
-	@PutMapping(value = "book-authors/")
-	public void replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
-	
+	@DeleteMapping(value = "/api/v1/authors/book-authors/", params = "bookId")
+	public void removeBookAuthors(@RequestParam("bookId") Long bookId);
+
+	@PutMapping(value = "/api/v1/authors/book-authors/")
+	public List<AuthorResponseDTO> replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
 
 }

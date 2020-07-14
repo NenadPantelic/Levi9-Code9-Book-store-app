@@ -49,11 +49,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
-//	@Override
-//	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.userDetailsService(getUserDetailsService()).passwordEncoder(passwordEncoder());
-//	}
-
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

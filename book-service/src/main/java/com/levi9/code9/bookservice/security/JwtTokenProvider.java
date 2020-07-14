@@ -109,9 +109,7 @@ public class JwtTokenProvider {
 		String username = getUsername(token);
 		List<GrantedAuthority> authorities = getAuthorities(token);
 		Long userId = getUserId(token);
-		jwtToken = token;
-		System.out.println("DEBUGGGGG");
-		System.out.println(jwtToken);
+		//jwtToken = token;
 		if (USER_CONTEXT.get() == null) {
 			USER_CONTEXT.set(new UserContext(userId, username, token, authorities));
 		}

@@ -15,6 +15,7 @@ public class UserContext {
 	
 	private Long _userId;
 	private String _username;
+	private String _token;
 	private List<GrantedAuthority> _authorities;
 
 }

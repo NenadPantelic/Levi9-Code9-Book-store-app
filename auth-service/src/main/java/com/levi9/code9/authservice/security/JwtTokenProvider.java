@@ -110,10 +110,10 @@ public class JwtTokenProvider {
 		Long userId = getUserId(token);
 		jwtToken = token;
 		if (USER_CONTEXT.get() == null) {
-			USER_CONTEXT.set(new UserContext(userId, username, authorities));
+			USER_CONTEXT.set(new UserContext(userId, username, token, authorities));
 		}
 	}
-
+	// set user context to null
 	public boolean validateToken(String token) {
 		try {
 			Jws<Claims> claims = Jwts.parser().setSigningKey(getSecretKey()).parseClaimsJws(token);

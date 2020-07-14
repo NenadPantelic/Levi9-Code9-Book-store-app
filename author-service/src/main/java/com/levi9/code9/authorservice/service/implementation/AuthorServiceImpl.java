@@ -1,5 +1,6 @@
 package com.levi9.code9.authorservice.service.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.levi9.code9.authorservice.dto.request.AuthorRequestDTO;
 import com.levi9.code9.authorservice.dto.response.AuthorResponseDTO;
+import com.levi9.code9.authorservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.authorservice.exception.ResourceNotFoundException;
 import com.levi9.code9.authorservice.mapper.AuthorMapper;
 import com.levi9.code9.authorservice.model.Author;
@@ -98,20 +100,23 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void addBookAuthor(Long authorId, Long bookId) {
+	public AuthorResponseDTO addBookAuthor(Long authorId, Long bookId) {
 		log.info("Adding author with an id = " + authorId + " to book with an id = " + bookId);
 		Author author = fetchAuthorById(authorId);
 		BookEntity book = getBookRepository().findById(bookId).orElse(new BookEntity(bookId));
 		author.addBook(book);
 		getAuthorRepository().save(author);
+		return getAuthorMapper().mapToDTO(author);
 
 	}
 
 	@Override
-	public void addBookAuthors(List<Long> authorsIds, Long bookId) {
-		for (Long authorId : authorsIds) {
-			addBookAuthor(authorId, bookId);
-		}
+	public List<AuthorResponseDTO> addBookAuthors(List<Long> authorsIds, Long bookId) {
+		List<AuthorResponseDTO> authors = new ArrayList<AuthorResponseDTO>();
+		authorsIds.forEach(authorId -> {
+			authors.add(addBookAuthor(authorId, bookId));
+		});
+		return authors;
 
 	}
 
@@ -140,10 +145,20 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public void replaceBookAuthors(List<Long> authorsIds, Long bookId) {
+	public void removeAllBookAuthors(Long bookId) {
+		List<Long> authorsIds = getAuthorRepository().findAuthorsIdsByBook(bookId);
+		for (Long authorId : authorsIds) {
+			removeBookAuthor(authorId, bookId);
+		}
+
+	}
+
+	@Override
+	public List<AuthorResponseDTO> replaceBookAuthors(List<Long> authorsIds, Long bookId) {
 		BookEntity book = getBookRepository().findById(bookId).orElseThrow(
 				() -> new ResourceNotFoundException("Book with the given id = " + bookId + " doesn't exist."));
 		List<Long> currentAuthors = getAuthorRepository().findAuthorsIdsByBook(bookId);
+		List<AuthorResponseDTO> authors = new ArrayList<AuthorResponseDTO>();
 		// remove authors that are not present anymore
 		for (Long authorId : currentAuthors) {
 			if (!authorsIds.contains(authorId)) {
@@ -156,6 +171,18 @@ public class AuthorServiceImpl implements AuthorService {
 				addBookAuthor(authorId, bookId);
 			}
 		}
+
+		return getBookAuthors(bookId);
+	}
+
+	@Override
+	public List<BookAuthorResponseDTO> getBooksAndAuthors(List<Long> booksIds) {
+		List<BookAuthorResponseDTO> booksAndTheirAuthors = new ArrayList<BookAuthorResponseDTO>();
+		booksIds.forEach(bookId -> {
+			List<Author> authors = getAuthorRepository().findAuthorsByBook(bookId);
+			booksAndTheirAuthors.add(new BookAuthorResponseDTO(bookId, getAuthorMapper().mapToDTOList(authors)));
+		});
+		return booksAndTheirAuthors;
 	}
 
 }

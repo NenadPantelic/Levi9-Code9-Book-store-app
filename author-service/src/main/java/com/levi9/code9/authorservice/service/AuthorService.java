@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.levi9.code9.authorservice.dto.request.AuthorRequestDTO;
 import com.levi9.code9.authorservice.dto.response.AuthorResponseDTO;
+import com.levi9.code9.authorservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.authorservice.model.Author;
 
 public interface AuthorService {
@@ -24,16 +25,20 @@ public interface AuthorService {
 
 	public List<AuthorResponseDTO> getAuthorsByIds(List<Long> ids);
 
-	public void addBookAuthor(Long authorId, Long bookId);
+	public AuthorResponseDTO addBookAuthor(Long authorId, Long bookId);
 
-	public void addBookAuthors(List<Long> authorsIds, Long bookId);
+	public List<AuthorResponseDTO> addBookAuthors(List<Long> authorsIds, Long bookId);
 	
 	public List<AuthorResponseDTO> getBookAuthors(Long bookId);
 
 	public void removeBookAuthor(Long authorId, Long bookId);
 
 	public void removeBookAuthors(List<Long> authorsIds, Long bookId);
+	
+	public void removeAllBookAuthors(Long bookId);
 
-	public void replaceBookAuthors(List<Long> authorsIds, Long bookId);
+	public List<AuthorResponseDTO> replaceBookAuthors(List<Long> authorsIds, Long bookId);
+	
+	public List<BookAuthorResponseDTO> getBooksAndAuthors(List<Long> booksIds);
 
 }

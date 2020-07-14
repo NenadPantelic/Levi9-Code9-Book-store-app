@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.dto.response;
+package com.levi9.code9.authorservice.dto.response;
 
 import java.util.List;
 
