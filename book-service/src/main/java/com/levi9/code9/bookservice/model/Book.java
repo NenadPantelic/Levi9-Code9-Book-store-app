@@ -94,8 +94,6 @@ public class Book {
 	@Builder.Default
 	private LocalDate _releaseDate = LocalDate.of(2001, 1, 1);
 
-//	@OneToMany(targetEntity = BookAuthorEntity.class, cascade= CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)
-//	@JoinTable(name = "book_author")
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinTable(name = "book_author", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "author_id") })
