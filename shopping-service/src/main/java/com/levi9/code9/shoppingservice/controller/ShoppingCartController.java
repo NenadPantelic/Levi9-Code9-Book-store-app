@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.shoppingservice.client.BookServiceClient;
@@ -87,7 +88,22 @@ public class ShoppingCartController {
 
 	@PreAuthorize("hasAuthority('BUYER')")
 	@DeleteMapping(value = "")
-	public void emptymShoppingCart() {
+	public void emptyShoppingCart() {
 		getShoppingCartService().emptyShoppingCart();
+	}
+	
+	
+	// targeted by User and Book microservice
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "", params="userId")
+	public void deleteShoppingCartByUserId(@RequestParam("userId") Long userId) {
+		getShoppingCartService().deleteShoppingCartByUserId(userId);
+	}
+	
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "", params="productId")
+	public void deleteShoppingCartByProductId(@RequestParam("productId") Long productId) {
+		getShoppingCartService().deleteShoppingCartItemsByProductId(productId);
 	}
 }

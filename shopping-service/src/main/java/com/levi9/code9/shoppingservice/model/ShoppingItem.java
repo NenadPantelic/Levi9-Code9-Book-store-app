@@ -33,4 +33,5 @@ public class ShoppingItem {
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
 	private Integer _quantity;
+	
 }

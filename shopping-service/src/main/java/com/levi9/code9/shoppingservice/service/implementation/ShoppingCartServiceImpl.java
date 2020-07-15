@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,6 +109,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteShoppingCartProducts(List<Long> productsIds) {
 		log.info("Removing products from the shopping cart.");
 		ShoppingCart shoppingCart = fetchShoppingCart();
@@ -123,6 +127,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
+	@Transactional
 	public void emptyShoppingCart() {
 		log.info("Emptying shopping cart");
 		ShoppingCart shoppingCart = fetchShoppingCart();
@@ -131,6 +136,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
+	@Transactional
 	public List<ShoppingProductResponseDTO> populateShoppingCartProductsResponse(Set<ShoppingItem> items,
 			List<BookWithAuthorResponseDTO> booksData) {
 		Map<Long, Object> map = booksData.stream()
@@ -148,14 +154,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteShoppingCartByUserId(Long userId) {
-		// TODO Auto-generated method stub
+		getShoppingCartRepository().deleteBy_userId(userId);
 
 	}
 
 	@Override
+	@Transactional
 	public void deleteShoppingCartItemsByProductId(Long productId) {
-		// TODO Auto-generated method stub
+		Optional<ShoppingItem> item = getShoppingItemRepository().findById(productId);
+		
+		if (item.isPresent()) {
+			
+		}
+		getShoppingItemRepository().deleteBy_productId(productId);
 
 	}
 

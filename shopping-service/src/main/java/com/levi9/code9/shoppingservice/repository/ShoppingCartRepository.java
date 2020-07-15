@@ -11,4 +11,6 @@ import com.levi9.code9.shoppingservice.model.ShoppingCart;
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
 
 	public Optional<ShoppingCart> findBy_userId(Long userId);
+
+	public Long deleteBy_userId(Long userId);
 }
