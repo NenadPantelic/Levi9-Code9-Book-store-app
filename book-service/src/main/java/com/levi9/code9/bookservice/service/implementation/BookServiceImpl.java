@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;

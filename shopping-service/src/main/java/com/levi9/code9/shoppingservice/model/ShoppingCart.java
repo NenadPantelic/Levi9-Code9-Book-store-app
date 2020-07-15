@@ -69,7 +69,14 @@ public class ShoppingCart {
 		getItems().addAll(items);
 	}
 
-	public ShoppingItem containsProduct(Long productId) {
+	public void removeItem(ShoppingItem item) {
+		if (getItems().contains(item)) {
+			getItems().remove(item);
+		}
+
+	}
+
+	public ShoppingItem getShoppingItemByProductId(Long productId) {
 		for (ShoppingItem item : getItems()) {
 			if (item.getProductId() == productId) {
 				return item;

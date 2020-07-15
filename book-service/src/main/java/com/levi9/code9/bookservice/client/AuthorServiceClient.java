@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.levi9.code9.bookservice.config.FeignConfig;
-import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
@@ -26,7 +26,7 @@ public interface AuthorServiceClient {
 	public List<AuthorResponseDTO> getBookAuthors(@RequestParam Long bookId);
 
 	@PostMapping(value = "/api/v1/authors/book-authors/list")
-	public List<BookAuthorResponseDTO> getBooksAuthors(@RequestBody BookAuthorListRequestDTO booksIds);
+	public List<BookAuthorResponseDTO> getBooksAuthors(@RequestBody BookListRequestDTO booksIds);
 
 	@DeleteMapping(value = "/api/v1/authors/book-authors/")
 	public void removeBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.bookservice.client.AuthorServiceClient;
-import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookIdsListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
@@ -101,7 +101,7 @@ public class BookController {
 
 	// utility method
 	private List<BookWithAuthorResponseDTO> getMergedBookAndAuthorDTOLists(List<BookResponseDTO> booksData) {
-		BookAuthorListRequestDTO listOfBooks = new BookAuthorListRequestDTO(
+		BookListRequestDTO listOfBooks = new BookListRequestDTO(
 				booksData.stream().map(book -> book.getId()).collect(Collectors.toList()));
 		log.info("Fetching authors from author microservice...");
 		List<BookAuthorResponseDTO> booksAuthors = getAuthorServiceClient().getBooksAuthors(listOfBooks);

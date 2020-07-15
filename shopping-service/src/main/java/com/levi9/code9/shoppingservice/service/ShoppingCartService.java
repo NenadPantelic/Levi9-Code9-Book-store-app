@@ -11,17 +11,25 @@ import com.levi9.code9.shoppingservice.model.ShoppingItem;
 
 public interface ShoppingCartService {
 
+	public ShoppingCart fetchShoppingCart();
+
+	public ShoppingCart saveShoppingCart(List<ShoppingCartRequestDTO> shoppingCartProducts);
+
 	public ShoppingCart addProductsToCart(List<ShoppingCartRequestDTO> shoppingCartProducts);
 
 	public ShoppingCart getShoppingCartProducts();
 
-	public List<ShoppingProductResponseDTO> updateShoppingCartProducts(
-			List<ShoppingCartRequestDTO> shoppingCartProducts);
+	public ShoppingCart updateShoppingCartProducts(List<ShoppingCartRequestDTO> shoppingCartProducts);
 
 	public void deleteShoppingCartProducts(List<Long> productsIds);
 
 	public void emptyShoppingCart();
-	
-	public List<ShoppingProductResponseDTO> populateShoppingCartProductsResponse(Set<ShoppingItem> items, List<BookWithAuthorResponseDTO> booksData);
+
+	public List<ShoppingProductResponseDTO> populateShoppingCartProductsResponse(Set<ShoppingItem> items,
+			List<BookWithAuthorResponseDTO> booksData);
+
+	public void deleteShoppingCartByUserId(Long userId);
+
+	public void deleteShoppingCartItemsByProductId(Long productId);
 
 }

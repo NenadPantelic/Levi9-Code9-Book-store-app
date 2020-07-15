@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
@@ -27,7 +27,7 @@ public class AuthorServiceClientFallback implements AuthorServiceClient {
 	}
 
 	@Override
-	public List<BookAuthorResponseDTO> getBooksAuthors(BookAuthorListRequestDTO booksIds) {
+	public List<BookAuthorResponseDTO> getBooksAuthors(BookListRequestDTO booksIds) {
 		return Arrays.asList(new BookAuthorResponseDTO(null,
 				Arrays.asList(new AuthorResponseDTO(null, UNKNOWN_MESSAGE, UNKNOWN_MESSAGE, UNKNOWN_MESSAGE))));
 	}

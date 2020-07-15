@@ -63,6 +63,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(ExistingShoppingCartException.class)
+	public final ResponseEntity<ExceptionResponse> badCredentialsException(ExistingShoppingCartException ex,
+			WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+				request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(NullPointerException.class)
 	public final ResponseEntity<ExceptionResponse> nullPointerException(Exception ex, WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), _nullPointerExceptionMessage,
@@ -77,7 +85,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
-	// TODO: add this to every MS
 	@ExceptionHandler(ConstraintViolationException.class)
 	public final ResponseEntity<ExceptionResponse> constraintViolationException(ConstraintViolationException ex,
 			WebRequest request) {
@@ -98,5 +105,4 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	
 }

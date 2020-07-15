@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookAuthorListRequestDTO {
+public class BookListRequestDTO {
 
 	private List<Long> _booksIds;
 }
