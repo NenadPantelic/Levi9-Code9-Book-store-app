@@ -1,5 +1,6 @@
 package com.levi9.code9.shoppingservice.model;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,4 +44,15 @@ public class ShoppingOrder {
 	@Builder.Default
 	private Set<ShoppingItem> _orderedItems = new HashSet<ShoppingItem>();
 
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_at")
+	@Builder.Default
+	private Date _createdAt = new Date();
+
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updated_at")
+	@Builder.Default
+	private Date _updatedAt = new Date();
 }

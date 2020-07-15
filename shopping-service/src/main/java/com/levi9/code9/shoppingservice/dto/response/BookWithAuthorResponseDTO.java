@@ -1,4 +1,4 @@
-package com.levi9.code9.bookservice.dto.response;
+package com.levi9.code9.shoppingservice.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,16 +24,6 @@ public class BookWithAuthorResponseDTO {
 	private Integer _quantity;
 	private List<AuthorResponseDTO> _authors;
 
-	public BookWithAuthorResponseDTO(BookResponseDTO book, List<AuthorResponseDTO> authors) {
-		_id = book.getId();
-		_title = book.getTitle();
-		_description = book.getDescription();
-		_unitPrice = book.getUnitPrice();
-		_publisher = book.getPublisher();
-		_releaseDate = book.getReleaseDate();
-		_genres = book.getGenres();
-		_authors = authors;
-		_quantity = book.getQuantity();
-	}
+
 
 }

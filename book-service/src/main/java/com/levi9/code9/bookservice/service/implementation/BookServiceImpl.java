@@ -108,6 +108,11 @@ public class BookServiceImpl implements BookService {
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByTitle(title));
 
 	}
+	
+	@Override
+	public List<BookResponseDTO> getBooksByIds(List<Long> ids) {
+		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
+	}
 
 	@Override
 	public BookResponseDTO updateBook(Long id, BookRequestDTO bookDTO) {
@@ -135,10 +140,6 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
-	@Override
-	public List<BookResponseDTO> getBooksByIds(List<Long> ids) {
-		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
-	}
 
 	@Override
 	public void deleteBookAuthors(Long authorId) {

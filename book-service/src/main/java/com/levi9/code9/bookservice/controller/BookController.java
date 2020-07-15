@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.levi9.code9.bookservice.client.AuthorServiceClient;
 import com.levi9.code9.bookservice.dto.request.BookAuthorListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookIdsListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
@@ -86,6 +87,14 @@ public class BookController {
 	@GetMapping(value = "", params = "title")
 	public List<BookWithAuthorResponseDTO> getBooksByTitle(@RequestParam("title") String title) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByTitle(title);
+		return getMergedBookAndAuthorDTOLists(booksData);
+
+	}
+	
+	
+	@PostMapping(value = "list")
+	public List<BookWithAuthorResponseDTO> getBooksByListOfIds(@RequestBody BookIdsListRequestDTO bookListRequestDTO) {
+		List<BookResponseDTO> booksData = getBookService().getBooksByIds(bookListRequestDTO.getBooksIds());
 		return getMergedBookAndAuthorDTOLists(booksData);
 
 	}

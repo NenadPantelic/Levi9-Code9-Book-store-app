@@ -1,15 +1,13 @@
-package com.levi9.code9.bookservice.config;
+package com.levi9.code9.shoppingservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import com.levi9.code9.bookservice.security.JwtTokenProvider;
+import com.levi9.code9.shoppingservice.security.JwtTokenProvider;
 
 import feign.RequestInterceptor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Slf4j
 public class FeignConfig {
 
 	private static final String JWT_PREFIX = "Bearer ";
