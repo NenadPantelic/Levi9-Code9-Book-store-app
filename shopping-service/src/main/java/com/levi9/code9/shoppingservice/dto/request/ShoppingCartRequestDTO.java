@@ -13,5 +13,6 @@ public class ShoppingCartRequestDTO {
 
 	private Long _productId;
 	private Integer _quantity;
+	private String _productName;
 
 }

@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.levi9.code9.bookservice.model.AuthorEntity;
+import com.levi9.code9.bookservice.model.Author;
 import com.levi9.code9.bookservice.model.Book;
 
 @Repository
@@ -22,6 +22,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	@Query("UPDATE Book b SET b._isActive=false WHERE b._id= :id")
 	@Modifying
 	public void softDelete(@Param("id") Long id);
+	
+	@Query("UPDATE Book b SET b._isActive=false WHERE b = :book")
+	@Modifying
+	public void softDelete(@Param("book") Book book);
+
 
 	@Query("SELECT b FROM Book b JOIN b._genres bg WHERE bg._id = :genreId")
 	public List<Book> findBooksByGenre(@Param("genreId") Long genreId);

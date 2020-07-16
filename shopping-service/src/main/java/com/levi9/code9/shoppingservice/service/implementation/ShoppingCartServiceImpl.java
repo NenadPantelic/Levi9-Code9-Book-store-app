@@ -58,22 +58,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
-	public ShoppingCart addProductsToCart(List<ShoppingCartRequestDTO> shoppingCartProducts) {
-		log.info("Adding products to the shopping cart....");
+	public ShoppingCart addProductToCart(ShoppingCartRequestDTO shoppingCartProduct) {
+		log.info("Adding product to the shopping cart....");
 		Long userId = JwtTokenProvider.USER_CONTEXT.get().getUserId();
-		if (getShoppingCartRepository().findBy_userId(userId).isPresent()) {
-			throw new ExistingShoppingCartException("Shopping cart for this user already exists.");
-		}
-		ShoppingCart shoppingCart = new ShoppingCart();
+		ShoppingCart shoppingCart = getShoppingCartRepository().findBy_userId(userId).orElse(new ShoppingCart());
 		shoppingCart.setUserId(userId);
 		Set<ShoppingItem> items = new HashSet<ShoppingItem>();
-		shoppingCartProducts.forEach(product -> {
-			ShoppingItem item = new ShoppingItem();
-			item.setProductId(product.getProductId());
-			item.setQuantity(product.getQuantity());
-			items.add(item);
-		});
-		shoppingCart.addItems(items);
+		ShoppingItem item = new ShoppingItem();
+		item.setProductId(shoppingCartProduct.getProductId());
+		item.setQuantity(shoppingCartProduct.getQuantity());
+		item.setProductName(shoppingCartProduct.getProductName());
+		items.add(item);
+		shoppingCart.addItem(item);
 		shoppingCart = getShoppingCartRepository().save(shoppingCart);
 		return shoppingCart;
 	}
@@ -97,6 +93,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 				item = new ShoppingItem();
 				item.setProductId(productId);
 				item.setQuantity(quantity);
+				item.setProductName(product.getProductName());
 				items.add(item);
 			} else {
 				item.setQuantity(quantity);

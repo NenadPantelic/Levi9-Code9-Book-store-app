@@ -15,7 +15,7 @@ public interface ShoppingCartService {
 
 	public ShoppingCart saveShoppingCart(List<ShoppingCartRequestDTO> shoppingCartProducts);
 
-	public ShoppingCart addProductsToCart(List<ShoppingCartRequestDTO> shoppingCartProducts);
+	public ShoppingCart addProductToCart(ShoppingCartRequestDTO shoppingCartProduct);
 
 	public ShoppingCart getShoppingCartProducts();
 

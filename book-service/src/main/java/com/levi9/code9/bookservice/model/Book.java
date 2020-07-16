@@ -98,7 +98,7 @@ public class Book {
 	@JoinTable(name = "book_author", joinColumns = { @JoinColumn(name = "book_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "author_id") })
 	@Builder.Default
-	private List<AuthorEntity> _authors = new ArrayList<AuthorEntity>();
+	private List<Author> _authors = new ArrayList<Author>();
 
 	@Column(name = "is_active")
 	@Builder.Default
@@ -116,7 +116,7 @@ public class Book {
 		return getAuthors().stream().map(val -> val.getId()).collect(Collectors.toList());
 	}
 
-	public void removeAuthor(AuthorEntity author) {
+	public void removeAuthor(Author author) {
 		if (getAuthors().contains(author)) {
 			getAuthors().remove(author);
 		}

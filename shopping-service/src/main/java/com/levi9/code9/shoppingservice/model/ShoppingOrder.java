@@ -1,5 +1,6 @@
 package com.levi9.code9.shoppingservice.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,6 +45,13 @@ public class ShoppingOrder {
 			@JoinColumn(name = "item_id") })
 	@Builder.Default
 	private Set<ShoppingItem> _orderedItems = new HashSet<ShoppingItem>();
+
+	@Column(name = "is_buyer_active", nullable = false)
+	@Builder.Default
+	private Boolean _isBuyerActive = true;
+
+	@Column(name = "price", nullable = false)
+	private BigDecimal _totalPrice;
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)

@@ -43,8 +43,8 @@ public class ShoppingCartController {
 	@PreAuthorize("hasAuthority('BUYER')")
 	@PostMapping(value = "")
 	public List<ShoppingProductResponseDTO> addProductsToCart(
-			@RequestBody List<ShoppingCartRequestDTO> shoppingCartProducts) {
-		ShoppingCart shoppingCart = getShoppingCartService().addProductsToCart(shoppingCartProducts);
+			@RequestBody ShoppingCartRequestDTO shoppingCartProduct) {
+		ShoppingCart shoppingCart = getShoppingCartService().addProductToCart(shoppingCartProduct);
 		List<ShoppingProductResponseDTO> shoppingCartContent = createShoppingCartResponse(shoppingCart);
 		log.info("Shopping cart products successfully added.");
 		return shoppingCartContent;

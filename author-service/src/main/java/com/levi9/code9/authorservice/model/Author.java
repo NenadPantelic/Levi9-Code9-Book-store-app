@@ -32,9 +32,9 @@ import lombok.experimental.Accessors;
 
 @Accessors(prefix = "_")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "first_name", "last_name" }) })
 public class Author {
@@ -57,11 +57,11 @@ public class Author {
 	@Column(name = "resume")
 	private String _resume;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST})
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinTable(name = "author_book", joinColumns = { @JoinColumn(name = "author_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "book_id") })
 	@Builder.Default
-	private Set<BookEntity> _books = new HashSet<BookEntity>();
+	private Set<Book> _books = new HashSet<Book>();
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
@@ -75,11 +75,11 @@ public class Author {
 	@Builder.Default
 	private Date _updatedAt = new Date();
 
-	public void addBook(BookEntity book) {
+	public void addBook(Book book) {
 		getBooks().add(book);
 	}
 
-	public void removeBook(BookEntity book) {
+	public void removeBook(Book book) {
 		if (getBooks().contains(book)) {
 			getBooks().remove(book);
 		}

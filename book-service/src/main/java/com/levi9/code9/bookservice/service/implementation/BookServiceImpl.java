@@ -21,7 +21,7 @@ import com.levi9.code9.bookservice.dto.response.BookWithAuthorResponseDTO;
 import com.levi9.code9.bookservice.exception.ResourceNotFoundException;
 import com.levi9.code9.bookservice.mapper.BookMapper;
 import com.levi9.code9.bookservice.model.Book;
-import com.levi9.code9.bookservice.model.AuthorEntity;
+import com.levi9.code9.bookservice.model.Author;
 import com.levi9.code9.bookservice.model.Genre;
 import com.levi9.code9.bookservice.repository.BookAuthorRepository;
 import com.levi9.code9.bookservice.repository.BookRepository;
@@ -56,13 +56,13 @@ public class BookServiceImpl implements BookService {
 		log.info("Adapting the book...");
 		Book book = getBookMapper().mapToEntity(bookDTO);
 		Set<Genre> genres = new HashSet<>();
-		List<AuthorEntity> authors = new ArrayList<>();
+		List<Author> authors = new ArrayList<>();
 		bookDTO.getGenresIds().forEach(genreId -> {
 			genres.add(getGenreService().fetchGenreById(genreId));
 		});
 		book.setGenres(genres);
 		for (Long authorId : bookDTO.getAuthorsIds()) {
-			AuthorEntity bookAuthor = getBookAuthorRepository().findById(authorId).orElse(new AuthorEntity(authorId));
+			Author bookAuthor = getBookAuthorRepository().findById(authorId).orElse(new Author(authorId));
 			authors.add(bookAuthor);
 		}
 
@@ -128,7 +128,8 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public void deleteBook(Long id) {
 		log.info("Deleting the book with an id = " + id);
-		getBookRepository().softDelete(id);
+		Book book = fetchBookById(id);
+		getBookRepository().softDelete(book);
 		log.info("Book successfully deleted.");
 	}
 
@@ -144,7 +145,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public void deleteBookAuthors(Long authorId) {
 		List<Book> booksByTargetAuthor = getBookRepository().findBooksByAuthorId(authorId);
-		AuthorEntity author = getBookAuthorRepository().findById(authorId).orElseThrow(
+		Author author = getBookAuthorRepository().findById(authorId).orElseThrow(
 				() -> new ResourceNotFoundException("The author with the id = " + authorId + " doesn't exist."));
 		booksByTargetAuthor.forEach(book -> {
 			book.removeAuthor(author);

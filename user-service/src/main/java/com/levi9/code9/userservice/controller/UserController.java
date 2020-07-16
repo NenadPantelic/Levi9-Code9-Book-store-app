@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.userservice.client.AuthServiceClient;
+import com.levi9.code9.userservice.client.ShoppingServiceClient;
 import com.levi9.code9.userservice.dto.request.UserRequestDTO;
 import com.levi9.code9.userservice.dto.response.UserResponseDTO;
 import com.levi9.code9.userservice.service.UserService;
@@ -38,6 +39,9 @@ public class UserController {
 
 	@Autowired
 	private AuthServiceClient _authServiceClient;
+
+	@Autowired
+	private ShoppingServiceClient _shoppingServiceClient;
 
 	@PostMapping(value = "")
 	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
@@ -77,6 +81,8 @@ public class UserController {
 		log.info("Request user removal from auth microservice");
 		getAuthServiceClient().deleteUser(id);
 		log.info("User successfully removed from auth microservice!");
+		log.info("Removing shopping carts for this user and updating state of orders invoices...!");
+		getShoppingServiceClient().deleteShoppingCartByUserId(id);
 
 	}
 

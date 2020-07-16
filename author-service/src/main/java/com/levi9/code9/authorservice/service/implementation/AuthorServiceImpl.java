@@ -15,7 +15,7 @@ import com.levi9.code9.authorservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.authorservice.exception.ResourceNotFoundException;
 import com.levi9.code9.authorservice.mapper.AuthorMapper;
 import com.levi9.code9.authorservice.model.Author;
-import com.levi9.code9.authorservice.model.BookEntity;
+import com.levi9.code9.authorservice.model.Book;
 import com.levi9.code9.authorservice.repository.AuthorRepository;
 import com.levi9.code9.authorservice.repository.BookRepository;
 import com.levi9.code9.authorservice.service.AuthorService;
@@ -81,13 +81,14 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public void deleteAuthor(Long id) {
 		log.info("Deleting the author with the id " + id);
-		getAuthorRepository().deleteById(id);
+		Author author = fetchAuthorById(id);
+		getAuthorRepository().delete(author);
 		log.info("Author successfully deleted.");
 	}
 
 	@Override
 	public Author fetchAuthorById(Long id) {
-		log.info("Fetching author with an id = " + id);
+		log.info("Fetching the author with an id = " + id);
 		Author author = getAuthorRepository().findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("The author with an id = " + id + " doesn't exist."));
 		return author;
@@ -101,9 +102,9 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public AuthorResponseDTO addBookAuthor(Long authorId, Long bookId) {
-		log.info("Adding author with an id = " + authorId + " to book with an id = " + bookId);
+		log.info("Adding the author with an id = " + authorId + " to book with an id = " + bookId);
 		Author author = fetchAuthorById(authorId);
-		BookEntity book = getBookRepository().findById(bookId).orElse(new BookEntity(bookId));
+		Book book = getBookRepository().findById(bookId).orElse(new Book(bookId));
 		author.addBook(book);
 		getAuthorRepository().save(author);
 		return getAuthorMapper().mapToDTO(author);
@@ -122,13 +123,11 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public void removeBookAuthor(Long authorId, Long bookId) {
-		Optional<BookEntity> book = getBookRepository().findById(bookId);
-		if (book.isPresent()) {
-			Author author = fetchAuthorById(authorId);
-			author.removeBook(book.get());
-			getAuthorRepository().save(author);
-
-		}
+		Book book = getBookRepository().findById(bookId).orElseThrow(
+				() -> new ResourceNotFoundException("The book with the given id = " + bookId + "doesn't exist"));
+		Author author = fetchAuthorById(authorId);
+		author.removeBook(book);
+		getAuthorRepository().save(author);
 
 	}
 
@@ -149,16 +148,18 @@ public class AuthorServiceImpl implements AuthorService {
 	// use when book is deleted
 	@Override
 	public void removeAllBookAuthors(Long bookId) {
+		Book book = getBookRepository().findById(bookId).orElseThrow(
+				() -> new ResourceNotFoundException("The book with the given id = " + bookId + "doesn't exist"));
 		List<Long> authorsIds = getAuthorRepository().findAuthorsIdsByBook(bookId);
 		for (Long authorId : authorsIds) {
 			removeBookAuthor(authorId, bookId);
 		}
-		getBookRepository().deleteById(bookId);
+		getBookRepository().delete(book);
 	}
 
 	@Override
 	public List<AuthorResponseDTO> replaceBookAuthors(List<Long> authorsIds, Long bookId) {
-		BookEntity book = getBookRepository().findById(bookId).orElseThrow(
+		Book book = getBookRepository().findById(bookId).orElseThrow(
 				() -> new ResourceNotFoundException("Book with the given id = " + bookId + " doesn't exist."));
 		List<Long> currentAuthors = getAuthorRepository().findAuthorsIdsByBook(bookId);
 		List<AuthorResponseDTO> authors = new ArrayList<AuthorResponseDTO>();
@@ -187,5 +188,5 @@ public class AuthorServiceImpl implements AuthorService {
 		});
 		return booksAndTheirAuthors;
 	}
-
+	
 }

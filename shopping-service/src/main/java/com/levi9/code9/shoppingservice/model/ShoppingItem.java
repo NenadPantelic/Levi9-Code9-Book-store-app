@@ -30,8 +30,18 @@ public class ShoppingItem {
 	@Column(name = "product_id", nullable = false)
 	private Long _productId; // more flexible name, in case we add some other shopping items - computers e.g.
 
+	// only for order report - some products will become inactive (deleted), so we won't be able to fetch their data,
+	// and basic report should have at least product id and name
+	@Column(name="product_name")
+	@Builder.Default
+	private String _productName = "unknown";
+
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
 	private Integer _quantity;
-	
+
+	@Column(name = "is_product_available", nullable = false)
+	@Builder.Default
+	private Boolean _isProductAvailable = true;
+
 }

@@ -91,9 +91,9 @@ public class UserServiceImpl implements UserService {
 
 	public void deleteUser(Long id) {
 		log.info("Deleting the user with the id =" + id);
-		getUserRepository().deleteById(id);
+		User user = fetchUserById(id);
+		getUserRepository().delete(user);
 		log.info("User successfully deleted.");
-		
 
 	}
 
