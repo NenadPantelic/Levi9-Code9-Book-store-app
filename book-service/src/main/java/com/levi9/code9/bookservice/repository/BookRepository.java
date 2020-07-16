@@ -19,11 +19,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 	public Optional<Book> findBookBy_title(String title);
 
-	@Query("UPDATE Book b SET b._isActive=false WHERE b._id= :id")
+	@Query("UPDATE Book b SET b._active=false WHERE b._id= :id")
 	@Modifying
 	public void softDelete(@Param("id") Long id);
 	
-	@Query("UPDATE Book b SET b._isActive=false WHERE b = :book")
+	@Query("UPDATE Book b SET b._active=false WHERE b = :book")
 	@Modifying
 	public void softDelete(@Param("book") Book book);
 

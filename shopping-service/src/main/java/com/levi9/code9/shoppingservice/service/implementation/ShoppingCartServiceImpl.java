@@ -1,10 +1,8 @@
 package com.levi9.code9.shoppingservice.service.implementation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,12 +14,12 @@ import org.springframework.stereotype.Service;
 import com.levi9.code9.shoppingservice.dto.request.ShoppingCartRequestDTO;
 import com.levi9.code9.shoppingservice.dto.response.BookWithAuthorResponseDTO;
 import com.levi9.code9.shoppingservice.dto.response.ShoppingProductResponseDTO;
-import com.levi9.code9.shoppingservice.exception.ExistingShoppingCartException;
 import com.levi9.code9.shoppingservice.exception.ResourceNotFoundException;
 import com.levi9.code9.shoppingservice.model.ShoppingCart;
 import com.levi9.code9.shoppingservice.model.ShoppingItem;
 import com.levi9.code9.shoppingservice.repository.ShoppingCartRepository;
 import com.levi9.code9.shoppingservice.repository.ShoppingItemRepository;
+import com.levi9.code9.shoppingservice.repository.ShoppingOrderRepository;
 import com.levi9.code9.shoppingservice.security.JwtTokenProvider;
 import com.levi9.code9.shoppingservice.service.ShoppingCartService;
 
@@ -33,10 +31,14 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @Service
+@Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 	@Autowired
 	private ShoppingCartRepository _shoppingCartRepository;
+
+	@Autowired
+	private ShoppingOrderRepository _shoppingOrderRepository;
 
 	@Autowired
 	private ShoppingItemRepository _shoppingItemRepository;
@@ -63,13 +65,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		Long userId = JwtTokenProvider.USER_CONTEXT.get().getUserId();
 		ShoppingCart shoppingCart = getShoppingCartRepository().findBy_userId(userId).orElse(new ShoppingCart());
 		shoppingCart.setUserId(userId);
-		Set<ShoppingItem> items = new HashSet<ShoppingItem>();
-		ShoppingItem item = new ShoppingItem();
-		item.setProductId(shoppingCartProduct.getProductId());
-		item.setQuantity(shoppingCartProduct.getQuantity());
-		item.setProductName(shoppingCartProduct.getProductName());
-		items.add(item);
-		shoppingCart.addItem(item);
+		// item already exists - just update quantity
+		ShoppingItem item = shoppingCart.getShoppingItemByProductId(shoppingCartProduct.getProductId());
+		if (item != null) {
+			int newQuantity = item.getQuantity() + shoppingCartProduct.getQuantity();
+			item.setQuantity(newQuantity);
+			getShoppingItemRepository().save(item);
+		} else {
+			item = new ShoppingItem();
+			item.setProductId(shoppingCartProduct.getProductId());
+			item.setQuantity(shoppingCartProduct.getQuantity());
+			String name = shoppingCartProduct.getProductName();
+			item.setProductName(name != null ? name : "unknown");
+			shoppingCart.addItem(item);
+		}
+
 		shoppingCart = getShoppingCartRepository().save(shoppingCart);
 		return shoppingCart;
 	}
@@ -84,7 +94,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	public ShoppingCart updateShoppingCartProducts(List<ShoppingCartRequestDTO> shoppingCartProducts) {
 		log.info("Updating products in the shopping cart...");
 		ShoppingCart shoppingCart = fetchShoppingCart();
-		Set<ShoppingItem> items = new HashSet<ShoppingItem>();
 		for (ShoppingCartRequestDTO product : shoppingCartProducts) {
 			Long productId = product.getProductId();
 			int quantity = product.getQuantity();
@@ -93,20 +102,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 				item = new ShoppingItem();
 				item.setProductId(productId);
 				item.setQuantity(quantity);
-				item.setProductName(product.getProductName());
-				items.add(item);
+				String name = product.getProductName();
+				item.setProductName(name != null ? name : "unknown");
+				shoppingCart.addItem(item);
 			} else {
 				item.setQuantity(quantity);
+				getShoppingItemRepository().save(item);
 			}
 
 		}
-		shoppingCart.addItems(items);
 		shoppingCart = getShoppingCartRepository().save(shoppingCart);
 		return shoppingCart;
 	}
 
 	@Override
-	@Transactional
 	public void deleteShoppingCartProducts(List<Long> productsIds) {
 		log.info("Removing products from the shopping cart.");
 		ShoppingCart shoppingCart = fetchShoppingCart();
@@ -124,7 +133,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
-	@Transactional
 	public void emptyShoppingCart() {
 		log.info("Emptying shopping cart");
 		ShoppingCart shoppingCart = fetchShoppingCart();
@@ -133,7 +141,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
-	@Transactional
 	public List<ShoppingProductResponseDTO> populateShoppingCartProductsResponse(Set<ShoppingItem> items,
 			List<BookWithAuthorResponseDTO> booksData) {
 		Map<Long, Object> map = booksData.stream()
@@ -144,6 +151,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 			if (map.containsKey(item.getProductId())) {
 				@SuppressWarnings("unchecked")
 				BookWithAuthorResponseDTO bookAuthorInfo = (BookWithAuthorResponseDTO) map.get(item.getProductId());
+				// TODO: this should not be here - refactor this
+				item.setPrice(bookAuthorInfo.getUnitPrice());
+				getShoppingItemRepository().save(item);
 				shoppingProductData.add(new ShoppingProductResponseDTO(bookAuthorInfo, item.getQuantity()));
 			}
 		}
@@ -156,11 +166,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	public void deleteShoppingCartByUserId(Long userId) {
 		log.info("Delete shopping cart for user with id = " + userId);
 		getShoppingCartRepository().deleteBy_userId(userId);
+		getShoppingOrderRepository().updateOrdersBuyerState(userId);
 
 	}
 
 	@Override
-	@Transactional
 	public void deleteShoppingCartItemsByProductId(Long productId) {
 		log.info("Delete shopping cart items for product with id = " + productId);
 		ShoppingItem item = getShoppingItemRepository().findBy_productId(productId);
@@ -173,7 +183,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 				getShoppingCartRepository().save(cart);
 			}
 		}
-		getShoppingItemRepository().deleteBy_productId(productId);
+		getShoppingItemRepository().updateItemProductState(productId);
+		//getShoppingItemRepository().deleteBy_productId(productId);
+		
 
 	}
 

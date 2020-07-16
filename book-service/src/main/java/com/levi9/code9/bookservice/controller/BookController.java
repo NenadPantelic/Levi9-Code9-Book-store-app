@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.levi9.code9.bookservice.client.AuthorServiceClient;
 import com.levi9.code9.bookservice.client.ShoppingServiceClient;
 import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookQuantityReductionRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookIdsListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
@@ -128,7 +129,6 @@ public class BookController {
 		getBookService().deleteBook(id);
 		log.info("Request books removal from book microservice....");
 		getAuthorServiceClient().removeBookAndBookAuthors(id);
-
 		log.info("Request books removal from shopping cart in shopping microservice....");
 		getShoppingServiceClient().deleteShoppingCartByProductId(id);
 	}
@@ -138,6 +138,11 @@ public class BookController {
 	public void deleteBookAuthors(@RequestParam("authorId") Long authorId) {
 		log.info("Removing authors data...");
 		getBookService().deleteBookAuthors(authorId);
+	}
+
+	@PostMapping(value = "reduce")
+	public void reduceBooksQuantity(@RequestBody List<BookQuantityReductionRequestDTO> booksReductionList) {
+		getBookService().reduceBooksQuantity(booksReductionList);
 	}
 
 }

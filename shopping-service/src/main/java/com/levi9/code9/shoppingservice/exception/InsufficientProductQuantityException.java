@@ -1,16 +1,14 @@
 package com.levi9.code9.shoppingservice.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class InvalidJwtAuthenticationException extends AuthenticationException{
+public class InsufficientProductQuantityException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
-	
-	public InvalidJwtAuthenticationException(String exceptionMessage) {
-		super(exceptionMessage);
+
+	public InsufficientProductQuantityException(String message) {
+		super(message);
 	}
-	
 }

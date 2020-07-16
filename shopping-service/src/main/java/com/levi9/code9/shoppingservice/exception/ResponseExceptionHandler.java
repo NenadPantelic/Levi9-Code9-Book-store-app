@@ -63,8 +63,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(ExistingShoppingCartException.class)
-	public final ResponseEntity<ExceptionResponse> badCredentialsException(ExistingShoppingCartException ex,
+	@ExceptionHandler(InsufficientProductQuantityException.class)
+	public final ResponseEntity<ExceptionResponse> badCredentialsException(InsufficientProductQuantityException ex,
 			WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
 				request.getDescription(false));

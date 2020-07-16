@@ -102,7 +102,7 @@ public class Book {
 
 	@Column(name = "is_active")
 	@Builder.Default
-	private Boolean _isActive = true;
+	private boolean _active = true;
 
 	public void addGenre(Genre genre) {
 		_genres.add(genre);
@@ -125,7 +125,7 @@ public class Book {
 
 	@PreRemove
 	private void preRemove() {
-		_isActive = false;
+		_active = false;
 	}
 
 }

@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookQuantityReductionRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookWithAuthorResponseDTO;
+import com.levi9.code9.bookservice.exception.InsufficientProductQuantityException;
 import com.levi9.code9.bookservice.exception.ResourceNotFoundException;
 import com.levi9.code9.bookservice.mapper.BookMapper;
 import com.levi9.code9.bookservice.model.Book;
@@ -108,7 +110,7 @@ public class BookServiceImpl implements BookService {
 		return getBookMapper().mapToDTOList(getBookRepository().findBooksByTitle(title));
 
 	}
-	
+
 	@Override
 	public List<BookResponseDTO> getBooksByIds(List<Long> ids) {
 		return getBookMapper().mapToDTOList(getBookRepository().findAllById(ids));
@@ -141,7 +143,6 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
-
 	@Override
 	public void deleteBookAuthors(Long authorId) {
 		List<Book> booksByTargetAuthor = getBookRepository().findBooksByAuthorId(authorId);
@@ -167,6 +168,28 @@ public class BookServiceImpl implements BookService {
 			bookAuthorData.add(new BookWithAuthorResponseDTO(bookRespDTO, authors));
 		}
 		return bookAuthorData;
+	}
+
+	@Override
+	public void reduceBooksQuantity(List<BookQuantityReductionRequestDTO> booksReductionList) {
+		List<Book> books = new ArrayList<Book>();
+		log.info("Updating quantity of book list.");
+		for (BookQuantityReductionRequestDTO quantityReductionReq : booksReductionList) {
+			Long bookId = quantityReductionReq.getBookId();
+			int reqQuantity = quantityReductionReq.getQuantity();
+			Book book = fetchBookById(bookId);
+			if (book.getQuantity() < reqQuantity) {
+				throw new InsufficientProductQuantityException(
+						"Invalid quantity provided. Book with the id = " + bookId + " has " + book.getQuantity()
+								+ " items in store and you asked to buy " + reqQuantity + " of them.");
+			} else {
+				book.setQuantity(book.getQuantity() - reqQuantity);
+				books.add(book);
+			}
+
+		}
+		// save updated books in batch
+		getBookRepository().saveAll(books);
 	}
 
 }

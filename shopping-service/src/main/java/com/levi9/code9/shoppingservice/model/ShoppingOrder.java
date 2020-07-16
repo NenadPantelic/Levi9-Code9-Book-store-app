@@ -46,9 +46,12 @@ public class ShoppingOrder {
 	@Builder.Default
 	private Set<ShoppingItem> _orderedItems = new HashSet<ShoppingItem>();
 
+	@Column(name = "user_id", nullable = false)
+	private Long _userId;
+
 	@Column(name = "is_buyer_active", nullable = false)
 	@Builder.Default
-	private Boolean _isBuyerActive = true;
+	private boolean _buyerActive = true;
 
 	@Column(name = "price", nullable = false)
 	private BigDecimal _totalPrice;

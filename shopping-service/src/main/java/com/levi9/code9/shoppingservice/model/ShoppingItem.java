@@ -1,13 +1,13 @@
 package com.levi9.code9.shoppingservice.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Min;
-
-import com.levi9.code9.shoppingservice.model.ShoppingCart.ShoppingCartBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +30,16 @@ public class ShoppingItem {
 	@Column(name = "product_id", nullable = false)
 	private Long _productId; // more flexible name, in case we add some other shopping items - computers e.g.
 
-	// only for order report - some products will become inactive (deleted), so we won't be able to fetch their data,
+	// only for order report - some products will become inactive (deleted), so we
+	// won't be able to fetch their data,
 	// and basic report should have at least product id and name
-	@Column(name="product_name")
+	@Column(name = "product_name")
 	@Builder.Default
 	private String _productName = "unknown";
+
+	@Column(name = "price")
+	@Min(value = 1)
+	private BigDecimal _price;
 
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
@@ -42,6 +47,5 @@ public class ShoppingItem {
 
 	@Column(name = "is_product_available", nullable = false)
 	@Builder.Default
-	private Boolean _isProductAvailable = true;
-
+	private boolean _productAvailable = true;
 }

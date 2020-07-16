@@ -2,6 +2,7 @@ package com.levi9.code9.bookservice.service;
 
 import java.util.List;
 
+import com.levi9.code9.bookservice.dto.request.BookQuantityReductionRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
@@ -36,5 +37,8 @@ public interface BookService {
 
 	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData,
 			List<BookAuthorResponseDTO> booksAuthors);
+	
+	public void reduceBooksQuantity(List<BookQuantityReductionRequestDTO> booksReductionList);
+
 
 }

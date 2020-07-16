@@ -63,6 +63,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(InsufficientProductQuantityException.class)
+	public final ResponseEntity<ExceptionResponse> badCredentialsException(InsufficientProductQuantityException ex,
+			WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+				request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(NullPointerException.class)
 	public final ResponseEntity<ExceptionResponse> nullPointerException(Exception ex, WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), _nullPointerExceptionMessage,
@@ -98,5 +106,4 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	
 }
