@@ -32,7 +32,7 @@ public interface AuthorServiceClient {
 	public void removeBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);
 
 	@DeleteMapping(value = "/api/v1/authors/book-authors/", params = "bookId")
-	public void removeBookAuthors(@RequestParam("bookId") Long bookId);
+	public void removeBookAndBookAuthors(@RequestParam("bookId") Long bookId);
 
 	@PutMapping(value = "/api/v1/authors/book-authors/")
 	public List<AuthorResponseDTO> replaceBookAuthors(@RequestBody BookAuthorsRequestDTO bookAuthors);

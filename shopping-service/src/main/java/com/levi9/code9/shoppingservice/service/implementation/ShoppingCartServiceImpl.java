@@ -62,7 +62,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		log.info("Adding products to the shopping cart....");
 		Long userId = JwtTokenProvider.USER_CONTEXT.get().getUserId();
 		if (getShoppingCartRepository().findBy_userId(userId).isPresent()) {
-			throw new ExistingShoppingCartException("Shopping cart already exists.");
+			throw new ExistingShoppingCartException("Shopping cart for this user already exists.");
 		}
 		ShoppingCart shoppingCart = new ShoppingCart();
 		shoppingCart.setUserId(userId);
@@ -142,6 +142,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		Map<Long, Object> map = booksData.stream()
 				.collect(Collectors.toMap(BookWithAuthorResponseDTO::getId, item -> item));
 		List<ShoppingProductResponseDTO> shoppingProductData = new ArrayList<ShoppingProductResponseDTO>();
+		log.info("Creating shopping cart response...");
 		for (ShoppingItem item : items) {
 			if (map.containsKey(item.getProductId())) {
 				@SuppressWarnings("unchecked")
@@ -156,6 +157,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	@Override
 	@Transactional
 	public void deleteShoppingCartByUserId(Long userId) {
+		log.info("Delete shopping cart for user with id = " + userId);
 		getShoppingCartRepository().deleteBy_userId(userId);
 
 	}
@@ -163,10 +165,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	@Override
 	@Transactional
 	public void deleteShoppingCartItemsByProductId(Long productId) {
-		Optional<ShoppingItem> item = getShoppingItemRepository().findById(productId);
-		
-		if (item.isPresent()) {
-			
+		log.info("Delete shopping cart items for product with id = " + productId);
+		ShoppingItem item = getShoppingItemRepository().findBy_productId(productId);
+
+		if (item != null) {
+			List<ShoppingCart> shoppingCarts = getShoppingCartRepository().findCartsByProductId(productId);
+			for (ShoppingCart cart : shoppingCarts) {
+				log.info("Removing shopping items....");
+				cart.removeItem(item);
+				getShoppingCartRepository().save(cart);
+			}
 		}
 		getShoppingItemRepository().deleteBy_productId(productId);
 

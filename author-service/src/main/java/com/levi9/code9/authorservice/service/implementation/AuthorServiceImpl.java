@@ -2,6 +2,7 @@ package com.levi9.code9.authorservice.service.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -121,11 +122,13 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public void removeBookAuthor(Long authorId, Long bookId) {
-		BookEntity book = getBookRepository().findById(bookId).orElseThrow(
-				() -> new ResourceNotFoundException("Book with the given id = " + bookId + " doesn't exist."));
-		Author author = fetchAuthorById(authorId);
-		author.removeBook(book);
-		getAuthorRepository().save(author);
+		Optional<BookEntity> book = getBookRepository().findById(bookId);
+		if (book.isPresent()) {
+			Author author = fetchAuthorById(authorId);
+			author.removeBook(book.get());
+			getAuthorRepository().save(author);
+
+		}
 
 	}
 

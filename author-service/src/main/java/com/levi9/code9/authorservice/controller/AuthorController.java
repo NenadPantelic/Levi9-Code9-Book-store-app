@@ -97,7 +97,7 @@ public class AuthorController {
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "book-authors/", params="bookId")
-	public void removeBookAuthors(@RequestParam("bookId") Long bookId) {
+	public void removeBookAndBookAuthors(@RequestParam("bookId") Long bookId) {
 		getAuthorService().removeAllBookAuthors(bookId);
 	}
 

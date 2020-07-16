@@ -39,7 +39,7 @@ public class AuthorServiceClientFallback implements AuthorServiceClient {
 	}
 
 	@Override
-	public void removeBookAuthors(Long bookId) {
+	public void removeBookAndBookAuthors(Long bookId) {
 		// TODO Auto-generated method stub
 
 	}

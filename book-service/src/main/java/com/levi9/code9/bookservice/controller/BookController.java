@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.bookservice.client.AuthorServiceClient;
+import com.levi9.code9.bookservice.client.ShoppingServiceClient;
 import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookIdsListRequestDTO;
@@ -44,6 +45,9 @@ public class BookController {
 
 	@Autowired
 	private BookService _bookService;
+
+	@Autowired
+	private ShoppingServiceClient _shoppingServiceClient;
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
@@ -90,8 +94,7 @@ public class BookController {
 		return getMergedBookAndAuthorDTOLists(booksData);
 
 	}
-	
-	
+
 	@PostMapping(value = "list")
 	public List<BookWithAuthorResponseDTO> getBooksByListOfIds(@RequestBody BookIdsListRequestDTO bookListRequestDTO) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByIds(bookListRequestDTO.getBooksIds());
@@ -124,6 +127,10 @@ public class BookController {
 	public void deleteBook(@PathVariable("id") Long id) {
 		getBookService().deleteBook(id);
 		log.info("Request books removal from book microservice....");
+		getAuthorServiceClient().removeBookAndBookAuthors(id);
+
+		log.info("Request books removal from shopping cart in shopping microservice....");
+		getShoppingServiceClient().deleteShoppingCartByProductId(id);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

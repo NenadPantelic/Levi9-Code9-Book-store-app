@@ -9,4 +9,6 @@ import com.levi9.code9.shoppingservice.model.ShoppingItem;
 public interface ShoppingItemRepository extends JpaRepository<ShoppingItem, Long> {
 
 	public long deleteBy_productId(Long productId);
+
+	public ShoppingItem findBy_productId(Long productId);
 }

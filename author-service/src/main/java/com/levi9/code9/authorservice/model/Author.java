@@ -57,7 +57,7 @@ public class Author {
 	@Column(name = "resume")
 	private String _resume;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinTable(name = "author_book", joinColumns = { @JoinColumn(name = "author_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "book_id") })
 	@Builder.Default
