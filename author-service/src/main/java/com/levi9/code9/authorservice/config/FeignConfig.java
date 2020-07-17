@@ -1,13 +1,14 @@
 package com.levi9.code9.authorservice.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import com.levi9.code9.authorservice.security.JwtTokenProvider;
 
 import feign.RequestInterceptor;
 import lombok.extern.slf4j.Slf4j;
 
-//@Component
+@Component
 @Slf4j
 public class FeignConfig {
 
