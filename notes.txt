@@ -1,3 +1,0 @@
-Poboljšanja i izmene:
-1) Možda je praktičnije da id-jevi budu UUID - jer su univerzalno jedinstveni (da se izbegne problem sinhornizacije id-jeva)
-
