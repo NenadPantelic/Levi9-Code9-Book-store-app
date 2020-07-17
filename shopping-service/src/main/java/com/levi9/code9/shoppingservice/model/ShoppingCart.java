@@ -43,12 +43,13 @@ public class ShoppingCart {
 	@Column(name = "user_id", nullable = false)
 	private Long _userId;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(name = "shopping_cart_item", joinColumns = {
 			@JoinColumn(name = "shopping_cart_id") }, inverseJoinColumns = { @JoinColumn(name = "item_id") })
 	@Builder.Default
 	private Set<ShoppingItem> _items = new HashSet<ShoppingItem>();
 
+	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")

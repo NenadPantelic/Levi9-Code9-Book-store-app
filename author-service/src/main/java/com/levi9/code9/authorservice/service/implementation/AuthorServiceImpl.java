@@ -149,7 +149,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public void removeAllBookAuthors(Long bookId) {
 		Book book = getBookRepository().findById(bookId).orElseThrow(
-				() -> new ResourceNotFoundException("The book with the given id = " + bookId + "doesn't exist"));
+				() -> new ResourceNotFoundException("The book with the given id = " + bookId + " doesn't exist"));
 		List<Long> authorsIds = getAuthorRepository().findAuthorsIdsByBook(bookId);
 		for (Long authorId : authorsIds) {
 			removeBookAuthor(authorId, bookId);

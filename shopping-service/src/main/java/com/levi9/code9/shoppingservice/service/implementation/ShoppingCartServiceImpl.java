@@ -96,21 +96,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 		ShoppingCart shoppingCart = fetchShoppingCart();
 		for (ShoppingCartRequestDTO product : shoppingCartProducts) {
 			Long productId = product.getProductId();
-			int quantity = product.getQuantity();
 			ShoppingItem item = shoppingCart.getShoppingItemByProductId(productId);
 			if (item == null) {
-				item = new ShoppingItem();
-				item.setProductId(productId);
-				item.setQuantity(quantity);
-				String name = product.getProductName();
-				item.setProductName(name != null ? name : "unknown");
-				shoppingCart.addItem(item);
-			} else {
-				item.setQuantity(quantity);
-				getShoppingItemRepository().save(item);
+				throw new ResourceNotFoundException(
+						"The product with the id = " + productId + " is not present in the shopping cart");
 			}
+			item.setQuantity(product.getQuantity());
+			getShoppingItemRepository().save(item);
 
 		}
+
 		shoppingCart = getShoppingCartRepository().save(shoppingCart);
 		return shoppingCart;
 	}
@@ -173,20 +168,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	@Override
 	public void deleteShoppingCartItemsByProductId(Long productId) {
 		log.info("Delete shopping cart items for product with id = " + productId);
-		ShoppingItem item = getShoppingItemRepository().findBy_productId(productId);
-
-		if (item != null) {
-			List<ShoppingCart> shoppingCarts = getShoppingCartRepository().findCartsByProductId(productId);
-			for (ShoppingCart cart : shoppingCarts) {
-				log.info("Removing shopping items....");
-				cart.removeItem(item);
-				getShoppingCartRepository().save(cart);
+		List<ShoppingItem> items = getShoppingItemRepository().findBy_productId(productId);
+		log.info("Removing shopping items....");
+		for (ShoppingItem item : items) {
+			ShoppingCart shoppingCart = getShoppingCartRepository().findCartByShoppingItem(item.getId());
+			System.out.println(shoppingCart);
+			if(shoppingCart != null) {
+				shoppingCart.removeItem(item);
+				getShoppingCartRepository().save(shoppingCart);
 			}
+			
 		}
-		getShoppingItemRepository().updateItemProductState(productId);
-		//getShoppingItemRepository().deleteBy_productId(productId);
-		
 
+		getShoppingItemRepository().updateItemProductState(productId);
+
+		// getShoppingItemRepository().deleteBy_productId(productId);
 	}
 
 }

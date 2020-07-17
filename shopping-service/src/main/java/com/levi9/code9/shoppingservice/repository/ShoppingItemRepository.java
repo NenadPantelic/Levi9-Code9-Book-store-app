@@ -17,12 +17,12 @@ public interface ShoppingItemRepository extends JpaRepository<ShoppingItem, Long
 
 	public long deleteBy_productId(Long productId);
 
-	public ShoppingItem findBy_productId(Long productId);
+	public List<ShoppingItem> findBy_productId(Long productId);
 
 	@Modifying
 	@Transactional
 	@Query("UPDATE ShoppingItem item SET item._productAvailable=false WHERE item._productId= :productId")
-	void updateItemProductState(@Param("productId") Long productId);
+	public void updateItemProductState(@Param("productId") Long productId);
 
 	// NOTE: optionally add total number of sold books (for admin)
 	@Query(value = "SELECT item.product_id FROM shopping_item item GROUP BY item.product_id ORDER BY SUM(item.quantity) DESC LIMIT :top", nativeQuery = true)

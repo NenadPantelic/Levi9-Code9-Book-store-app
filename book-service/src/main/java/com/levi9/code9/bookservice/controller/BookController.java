@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/books/")
-@Api(tags="BookEndpoints")
+@Api(tags = "BookEndpoints")
 public class BookController {
 
 	@Autowired
@@ -65,13 +65,13 @@ public class BookController {
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
 	}
 
-	@ApiOperation(value="Get all books")
+	@ApiOperation(value = "Get all books")
 	@GetMapping
 	public List<BookWithAuthorResponseDTO> getBooks() {
 		List<BookResponseDTO> booksData = getBookService().getAllBooks();
 		return getMergedBookAndAuthorDTOLists(booksData);
 	}
-	
+
 	@ApiOperation(value = "Get a specific book")
 	@GetMapping(value = "{id}")
 	public BookWithAuthorResponseDTO getBook(@PathVariable("id") Long id) {
@@ -82,22 +82,22 @@ public class BookController {
 
 	}
 
-	@ApiOperation(value="Get all books by genre id")
+	@ApiOperation(value = "Get all books by genre id")
 	@GetMapping(value = "", params = "genreId")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenre(genreId);
 		return getMergedBookAndAuthorDTOLists(booksData);
 	}
 
-	@ApiOperation(value="Get all books by genre name")
+	@ApiOperation(value = "Get all books by genre name")
 	@GetMapping(value = "", params = "genre")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genre") String genreName) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenreName(genreName);
 		return getMergedBookAndAuthorDTOLists(booksData);
 
 	}
-	
-	@ApiOperation(value="Get all books by title")
+
+	@ApiOperation(value = "Get all books by title")
 	@GetMapping(value = "", params = "title")
 	public List<BookWithAuthorResponseDTO> getBooksByTitle(@RequestParam("title") String title) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByTitle(title);
@@ -105,7 +105,7 @@ public class BookController {
 
 	}
 
-	@ApiOperation(value="Get all books by list of ids")
+	@ApiOperation(value = "Get all books by list of ids")
 	@PostMapping(value = "list")
 	public List<BookWithAuthorResponseDTO> getBooksByListOfIds(@RequestBody BookIdsListRequestDTO bookListRequestDTO) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByIds(bookListRequestDTO.getBooksIds());

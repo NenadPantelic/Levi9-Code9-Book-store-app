@@ -85,11 +85,12 @@ public class UserController {
 	@DeleteMapping(value = "{id}")
 	public void deleteUser(@PathVariable("id") Long id) {
 		getUserService().deleteUser(id);
+		log.info("Removing shopping carts for this user and updating state of orders invoices...!");
+		getShoppingServiceClient().deleteShoppingCartByUserId(id);
 		log.info("Request user removal from auth microservice");
 		getAuthServiceClient().deleteUser(id);
 		log.info("User successfully removed from auth microservice!");
-		log.info("Removing shopping carts for this user and updating state of orders invoices...!");
-		getShoppingServiceClient().deleteShoppingCartByUserId(id);
+		
 
 	}
 

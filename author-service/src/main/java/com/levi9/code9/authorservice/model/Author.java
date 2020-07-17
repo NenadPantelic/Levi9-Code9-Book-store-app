@@ -54,8 +54,9 @@ public class Author {
 	private String _lastName;
 
 	@Size(max = 500, message = "Resume text is too long. It cannot be longer than 500 characters.")
-	@Column(name = "resume")
-	private String _resume;
+	@Column(name = "resume", nullable=false)
+	@Builder.Default
+	private String _resume = "unknown";
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinTable(name = "author_book", joinColumns = { @JoinColumn(name = "author_id") }, inverseJoinColumns = {

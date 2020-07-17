@@ -9,6 +9,6 @@ import com.levi9.code9.userservice.config.FeignConfig;
 @FeignClient(name = "shopping-service", configuration = { FeignConfig.class })
 
 public interface ShoppingServiceClient {
-	@DeleteMapping(value = "", params = "userId")
+	@DeleteMapping(value = "/api/v1/shopping-cart/", params = "userId")
 	public void deleteShoppingCartByUserId(@RequestParam("userId") Long userId);
 }

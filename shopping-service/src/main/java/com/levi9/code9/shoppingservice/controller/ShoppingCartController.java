@@ -122,6 +122,7 @@ public class ShoppingCartController {
 		ShoppingCart shoppingCart = (ShoppingCart) shoppingObjects.get(1);
 		getBookServiceClient().reduceBooksQuantity(Utils.getQuantityReductionListFromCart(shoppingCart.getItems()));
 		return getShoppingService().commitOrder(shoppingOrder, shoppingCart);
+		
 	}
 
 	@ApiOperation(value = "Delete shopping cart upon user removal")

@@ -31,7 +31,6 @@ public class FeignErrorDecoder implements ErrorDecoder {
 			}
 
 		}
-
 		return new ClientMicroserviceException(
 				ERROR_MESSAGE + Utils.parseResponseToString(originalResponseMessage).toString());
 	}
