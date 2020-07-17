@@ -39,15 +39,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return new AuthManager();
 	}
-	
+
 	@Bean
-	public ThreadLocal<UserContext> context(){
+	public ThreadLocal<UserContext> context() {
 		return new ThreadLocal<UserContext>();
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().anyRequest().authenticated().and().exceptionHandling()
+		http.cors().and().csrf().disable().authorizeRequests()
+				.antMatchers( "**/api-docs/**", "/swagger-resources/**", "**/swagger-ui.html", "/webjars/**")
+				.permitAll().antMatchers("/api/v1/**").authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(getAuthEntryPoint()).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(getTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -17,17 +17,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-@Api(tags = "AuthenticationEndpoints")
 @Accessors(prefix = "_")
 @Getter
 @RestController
 @RequestMapping(value = "/auth/")
+@Api(tags = "AuthenticationEndpoints")
 public class AuthController {
 
 	@Autowired
 	AuthService _authService;
 
-	@ApiOperation(value = "Authenticates a user and returns a token")
+	@ApiOperation(value = "Authenticates a user")
 	@PostMapping(value = "signin")
 	public SigninResponseDTO signin(@Valid @RequestBody SigninRequestDTO credentialsDto) {
 		return getAuthService().signin(credentialsDto);

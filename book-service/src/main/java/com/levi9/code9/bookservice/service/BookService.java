@@ -33,7 +33,7 @@ public interface BookService {
 
 	public List<BookResponseDTO> getBooksByTitle(String title);
 	
-	public void deleteBookAuthors(Long authorId);
+	public void deleteBookAuthor(Long authorId);
 
 	public List<BookWithAuthorResponseDTO> fillBooksDataWithAuthorsData(List<BookResponseDTO> booksData,
 			List<BookAuthorResponseDTO> booksAuthors);

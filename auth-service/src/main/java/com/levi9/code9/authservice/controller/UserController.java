@@ -19,6 +19,8 @@ import com.levi9.code9.authservice.dto.request.UserRequestDTO;
 import com.levi9.code9.authservice.dto.response.UserResponseDTO;
 import com.levi9.code9.authservice.service.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -27,35 +29,41 @@ import lombok.experimental.Accessors;
 @RestController
 @RequestMapping(value = "/api/v1/auth/users/")
 @PreAuthorize("hasAuthority('ADMIN')")
+@Api(tags = "UserEndpoints")
 public class UserController {
 
 	@Autowired
 	private UserService _userService;
 
+	@ApiOperation(value = "Add a new user")
 	@PostMapping(value = "")
 	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
 		return getUserService().createUser(signupDto);
 
 	}
 
+	@ApiOperation(value = "Get all users")
 	@GetMapping(value = "")
 	public List<UserResponseDTO> getUsers() {
 		return getUserService().getAllUsers();
 
 	}
 
+	@ApiOperation(value = "Get a specific user")
 	@GetMapping(value = "{id}")
 	public UserResponseDTO getUserById(@PathVariable("id") Long id) {
 		return getUserService().getUserById(id);
 
 	}
 
+	@ApiOperation(value = "Update a specific user")
 	@PutMapping(value = "{id}")
 	public UserResponseDTO updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userDto) {
 		return getUserService().updateUser(id, userDto);
 
 	}
 
+	@ApiOperation(value = "Delete a specific user")
 	@DeleteMapping(value = "{id}")
 	public void deleteUser(@PathVariable("id") Long id) {
 		getUserService().deleteUser(id);

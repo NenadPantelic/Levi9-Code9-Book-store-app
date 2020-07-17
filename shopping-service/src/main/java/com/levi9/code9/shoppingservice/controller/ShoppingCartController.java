@@ -28,6 +28,8 @@ import com.levi9.code9.shoppingservice.service.ShoppingCartService;
 import com.levi9.code9.shoppingservice.service.ShoppingService;
 import com.levi9.code9.shoppingservice.utils.Utils;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/shopping-cart/")
+@Api(tags = "ShoppingCartEndpoints")
 public class ShoppingCartController {
 
 	@Autowired
@@ -48,6 +51,7 @@ public class ShoppingCartController {
 	@Autowired
 	private BookServiceClient _bookServiceClient;
 
+	@ApiOperation(value = "Add products to a shopping cart")
 	@PreAuthorize("hasAuthority('BUYER')")
 	@PostMapping(value = "")
 	public List<ShoppingProductResponseDTO> addProductsToCart(@RequestBody ShoppingCartRequestDTO shoppingCartProduct) {
@@ -63,16 +67,20 @@ public class ShoppingCartController {
 
 	}
 
+	@ApiOperation(value = "Get shopping cart content")
 	@PreAuthorize("hasAuthority('BUYER')")
 	@GetMapping(value = "")
 	public List<ShoppingProductResponseDTO> getShoppingCartProducts() {
 		log.info("Fetching book and author data from book microservice upon shopping cart update...");
 		// TODO: think about adding validateProductQuantities here too
+		// TODO: change response -> it should not return exception response if the
+		// shopping cart is empty
 		ShoppingCart shoppingCart = getShoppingCartService().getShoppingCartProducts();
 		List<ShoppingProductResponseDTO> shoppingCartContent = createShoppingCartResponse(shoppingCart);
 		return shoppingCartContent;
 	}
 
+	@ApiOperation(value = "Update shopping cart content (products and quantities)")
 	@PreAuthorize("hasAuthority('BUYER')")
 	@PutMapping(value = "")
 	public List<ShoppingProductResponseDTO> updateShoppingCartProducts(
@@ -87,6 +95,48 @@ public class ShoppingCartController {
 		List<ShoppingProductResponseDTO> shoppingCartContent = createShoppingCartResponse(shoppingCart);
 		log.info("Shopping cart products successfully updated.");
 		return shoppingCartContent;
+	}
+
+	@ApiOperation(value = "Delete products from a shopping cart")
+	@PreAuthorize("hasAuthority('BUYER')")
+	@DeleteMapping(value = "list")
+	public void deleteProductsFromShoppingCart(@RequestBody BookListRequestDTO bookList) {
+		getShoppingCartService().deleteShoppingCartProducts(bookList.getBooksIds());
+	}
+
+	
+	@ApiOperation(value = "Empty the shopping cart")
+	@PreAuthorize("hasAuthority('BUYER')")
+	@DeleteMapping(value = "")
+	public void emptyShoppingCart() {
+		getShoppingCartService().emptyShoppingCart();
+	}
+
+	@ApiOperation(value = "Buy products from the shopping cart")
+	// for shopping cart confirmation
+	@PreAuthorize("hasAuthority('BUYER')")
+	@PostMapping(value = "confirm")
+	public ShoppingOrderResponseDTO confirmThePurchase() {
+		List<Object> shoppingObjects = getShoppingService().confirmThePurchase();
+		ShoppingOrder shoppingOrder = (ShoppingOrder) shoppingObjects.get(0);
+		ShoppingCart shoppingCart = (ShoppingCart) shoppingObjects.get(1);
+		getBookServiceClient().reduceBooksQuantity(Utils.getQuantityReductionListFromCart(shoppingCart.getItems()));
+		return getShoppingService().commitOrder(shoppingOrder, shoppingCart);
+	}
+
+	@ApiOperation(value = "Delete shopping cart upon user removal")
+	// NOTE: targeted by User and Book microservice
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "", params = "userId")
+	public void deleteShoppingCartByUserId(@RequestParam("userId") Long userId) {
+		getShoppingCartService().deleteShoppingCartByUserId(userId);
+	}
+
+	@ApiOperation(value = "Delete shopping cart items upon product removal")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping(value = "", params = "productId")
+	public void deleteShoppingCartByProductId(@RequestParam("productId") Long productId) {
+		getShoppingCartService().deleteShoppingCartItemsByProductId(productId);
 	}
 
 	private List<ShoppingProductResponseDTO> createShoppingCartResponse(ShoppingCart shoppingCart) {
@@ -105,42 +155,6 @@ public class ShoppingCartController {
 		productsData = getShoppingCartService().populateShoppingCartProductsResponse(shoppingCart.getItems(),
 				booksData);
 		return productsData;
-	}
-
-	@PreAuthorize("hasAuthority('BUYER')")
-	@DeleteMapping(value = "list")
-	public void deleteProductsFromShoppingCart(@RequestBody BookListRequestDTO bookList) {
-		getShoppingCartService().deleteShoppingCartProducts(bookList.getBooksIds());
-	}
-
-	@PreAuthorize("hasAuthority('BUYER')")
-	@DeleteMapping(value = "")
-	public void emptyShoppingCart() {
-		getShoppingCartService().emptyShoppingCart();
-	}
-
-	// for shopping cart confirmation
-	@PreAuthorize("hasAuthority('BUYER')")
-	@PostMapping(value = "confirm")
-	public ShoppingOrderResponseDTO confirmThePurchase() {
-		List<Object> shoppingObjects = getShoppingService().confirmThePurchase();
-		ShoppingOrder shoppingOrder = (ShoppingOrder) shoppingObjects.get(0);
-		ShoppingCart shoppingCart = (ShoppingCart) shoppingObjects.get(1);
-		getBookServiceClient().reduceBooksQuantity(Utils.getQuantityReductionListFromCart(shoppingCart.getItems()));
-		return getShoppingService().commitOrder(shoppingOrder, shoppingCart);
-	}
-
-	// NOTE: targeted by User and Book microservice
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping(value = "", params = "userId")
-	public void deleteShoppingCartByUserId(@RequestParam("userId") Long userId) {
-		getShoppingCartService().deleteShoppingCartByUserId(userId);
-	}
-
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping(value = "", params = "productId")
-	public void deleteShoppingCartByProductId(@RequestParam("productId") Long productId) {
-		getShoppingCartService().deleteShoppingCartItemsByProductId(productId);
 	}
 
 }

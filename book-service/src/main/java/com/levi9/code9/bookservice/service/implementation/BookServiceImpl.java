@@ -144,7 +144,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public void deleteBookAuthors(Long authorId) {
+	public void deleteBookAuthor(Long authorId) {
 		List<Book> booksByTargetAuthor = getBookRepository().findBooksByAuthorId(authorId);
 		Author author = getBookAuthorRepository().findById(authorId).orElseThrow(
 				() -> new ResourceNotFoundException("The author with the id = " + authorId + " doesn't exist."));

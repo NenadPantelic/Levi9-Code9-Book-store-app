@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +21,8 @@ import com.levi9.code9.userservice.dto.request.UserRequestDTO;
 import com.levi9.code9.userservice.dto.response.UserResponseDTO;
 import com.levi9.code9.userservice.service.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping(value = "/api/v1/users/")
 @PreAuthorize(" hasAuthority('ADMIN')")
+@Api(tags = "UserEndpoints")
 public class UserController {
 
 	@Autowired
@@ -43,6 +45,7 @@ public class UserController {
 	@Autowired
 	private ShoppingServiceClient _shoppingServiceClient;
 
+	@ApiOperation(value = "Add a new user")
 	@PostMapping(value = "")
 	public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO signupDto) {
 		UserResponseDTO newUser = getUserService().createUser(signupDto);
@@ -53,18 +56,21 @@ public class UserController {
 
 	}
 
+	@ApiOperation(value = "Get all users")
 	@GetMapping(value = "")
 	public List<UserResponseDTO> getUsers() {
 		return getUserService().getAllUsers();
 
 	}
 
+	@ApiOperation(value = "Get a specific user")
 	@GetMapping(value = "{id}")
 	public UserResponseDTO getUser(@PathVariable("id") Long id) {
 		return getUserService().getUserById(id);
 
 	}
 
+	@ApiOperation(value = "Update a specific user")
 	@PutMapping(value = "{id}")
 	public UserResponseDTO updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDTO userDto) {
 		UserResponseDTO updatedUser = getUserService().updateUser(id, userDto);
@@ -75,6 +81,7 @@ public class UserController {
 
 	}
 
+	@ApiOperation(value = "Delete a specific user")
 	@DeleteMapping(value = "{id}")
 	public void deleteUser(@PathVariable("id") Long id) {
 		getUserService().deleteUser(id);

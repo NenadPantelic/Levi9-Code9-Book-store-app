@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.levi9.code9.bookservice.client.AuthorServiceClient;
 import com.levi9.code9.bookservice.client.ShoppingServiceClient;
-import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
-import com.levi9.code9.bookservice.dto.request.BookQuantityReductionRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookAuthorsRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookIdsListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookListRequestDTO;
+import com.levi9.code9.bookservice.dto.request.BookQuantityReductionRequestDTO;
 import com.levi9.code9.bookservice.dto.request.BookRequestDTO;
 import com.levi9.code9.bookservice.dto.response.AuthorResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookAuthorResponseDTO;
@@ -30,6 +30,8 @@ import com.levi9.code9.bookservice.dto.response.BookResponseDTO;
 import com.levi9.code9.bookservice.dto.response.BookWithAuthorResponseDTO;
 import com.levi9.code9.bookservice.service.BookService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/books/")
+@Api(tags="BookEndpoints")
 public class BookController {
 
 	@Autowired
@@ -50,6 +53,7 @@ public class BookController {
 	@Autowired
 	private ShoppingServiceClient _shoppingServiceClient;
 
+	@ApiOperation(value = "Create a book")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping
 	public BookWithAuthorResponseDTO createBook(@Valid @RequestBody BookRequestDTO bookDTO) {
@@ -61,6 +65,14 @@ public class BookController {
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
 	}
 
+	@ApiOperation(value="Get all books")
+	@GetMapping
+	public List<BookWithAuthorResponseDTO> getBooks() {
+		List<BookResponseDTO> booksData = getBookService().getAllBooks();
+		return getMergedBookAndAuthorDTOLists(booksData);
+	}
+	
+	@ApiOperation(value = "Get a specific book")
 	@GetMapping(value = "{id}")
 	public BookWithAuthorResponseDTO getBook(@PathVariable("id") Long id) {
 		BookResponseDTO bookRespDTO = getBookService().getBookById(id);
@@ -70,25 +82,22 @@ public class BookController {
 
 	}
 
-	@GetMapping
-	public List<BookWithAuthorResponseDTO> getBooks() {
-		List<BookResponseDTO> booksData = getBookService().getAllBooks();
-		return getMergedBookAndAuthorDTOLists(booksData);
-	}
-
+	@ApiOperation(value="Get all books by genre id")
 	@GetMapping(value = "", params = "genreId")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genreId") Long genreId) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenre(genreId);
 		return getMergedBookAndAuthorDTOLists(booksData);
 	}
 
+	@ApiOperation(value="Get all books by genre name")
 	@GetMapping(value = "", params = "genre")
 	public List<BookWithAuthorResponseDTO> getBooksByGenre(@RequestParam("genre") String genreName) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByGenreName(genreName);
 		return getMergedBookAndAuthorDTOLists(booksData);
 
 	}
-
+	
+	@ApiOperation(value="Get all books by title")
 	@GetMapping(value = "", params = "title")
 	public List<BookWithAuthorResponseDTO> getBooksByTitle(@RequestParam("title") String title) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByTitle(title);
@@ -96,6 +105,7 @@ public class BookController {
 
 	}
 
+	@ApiOperation(value="Get all books by list of ids")
 	@PostMapping(value = "list")
 	public List<BookWithAuthorResponseDTO> getBooksByListOfIds(@RequestBody BookIdsListRequestDTO bookListRequestDTO) {
 		List<BookResponseDTO> booksData = getBookService().getBooksByIds(bookListRequestDTO.getBooksIds());
@@ -112,6 +122,7 @@ public class BookController {
 		return getBookService().fillBooksDataWithAuthorsData(booksData, booksAuthors);
 	}
 
+	@ApiOperation(value = "Update a specific book")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping(value = "{id}")
 	public BookWithAuthorResponseDTO updateBook(@PathVariable("id") Long id,
@@ -123,6 +134,7 @@ public class BookController {
 		return new BookWithAuthorResponseDTO(bookRespDTO, authors);
 	}
 
+	@ApiOperation(value = "Delete a specific book")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "{id}")
 	public void deleteBook(@PathVariable("id") Long id) {
@@ -133,13 +145,15 @@ public class BookController {
 		getShoppingServiceClient().deleteShoppingCartByProductId(id);
 	}
 
+	@ApiOperation(value = "Delete books author")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping(value = "", params = "authorId")
-	public void deleteBookAuthors(@RequestParam("authorId") Long authorId) {
-		log.info("Removing authors data...");
-		getBookService().deleteBookAuthors(authorId);
+	public void deleteBookAuthor(@RequestParam("authorId") Long authorId) {
+		log.info("Removing author's data...");
+		getBookService().deleteBookAuthor(authorId);
 	}
 
+	@ApiOperation(value = "Reduce books quantity upon shopping action")
 	@PostMapping(value = "reduce")
 	public void reduceBooksQuantity(@RequestBody List<BookQuantityReductionRequestDTO> booksReductionList) {
 		getBookService().reduceBooksQuantity(booksReductionList);
