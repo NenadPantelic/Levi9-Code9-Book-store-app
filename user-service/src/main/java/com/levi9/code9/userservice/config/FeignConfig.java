@@ -20,7 +20,7 @@ public class FeignConfig {
 		return requestTemplate -> {
 			requestTemplate.header("Content-Type", "application/json");
 			requestTemplate.header("Accept", "application/json");
-			requestTemplate.header("Authorization", JWT_PREFIX + JwtTokenProvider.jwtToken);
+			requestTemplate.header("Authorization", JWT_PREFIX + JwtTokenProvider.USER_CONTEXT.get().getToken());
 
 		};
 	}
