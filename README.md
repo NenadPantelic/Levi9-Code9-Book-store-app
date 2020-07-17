@@ -3,7 +3,7 @@ Project for Java workshop Code9 organized by Levi9 company.
 <br>
 <br>
 
-APIs ports:
+APIs ports: <br>
 8761 - eureka registry server <br>
 8080 - Auth microservice <br>
 8081 - User microservice <br>
